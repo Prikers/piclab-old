@@ -4,8 +4,8 @@ const fakePhotos = [];
 for (let i = 0; i < 25; i += 1) {
   fakePhotos.push({
     id: i,
-    src: `https://picsum.photos/500/300?image=${i * 5 + 10}`,
-    lazySrc: `https://picsum.photos/10/6?image=${i * 5 + 10}`,
+    src: `https://picsum.photos/500/300?image=${i * 5 + 9}`,
+    lazySrc: `https://picsum.photos/10/6?image=${i * 5 + 9}`,
     is_liked: false,
     name: `image ${i}`,
     date: 'March 31, 2019',
@@ -34,7 +34,10 @@ const actions = {
 };
 
 const mutations = {
-  setTodos: (state_, photos) => (state_.photos = photos),
+  setTodos: (state_, photos) => {
+    const s = state_;
+    s.photos = photos;
+  },
 };
 
 export default {
