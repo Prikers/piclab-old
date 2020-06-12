@@ -1,11 +1,17 @@
 <template>
   <div class="wrapper">
-    <h1>Gallery</h1>
+    <Photos/>
   </div>
 </template>
 
 <script>
+import Photos from "@/components/Photos.vue"; // @ is an alias to /src
+import { mapGetters } from "vuex";
+
 export default {
   name: 'Gallery',
+  components: {
+    Photos,
+  },
 };
 </script>
