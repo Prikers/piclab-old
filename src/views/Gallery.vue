@@ -18,13 +18,19 @@
 
 <script>
 import Photo from '@/components/Photo.vue'; // @ is an alias to /src
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'Gallery',
   components: {
     Photo,
   },
+  methods: {
+    ...mapActions(['fetchPhotos']),
+  },
   computed: mapGetters(['allPhotos']),
+  created() {
+    this.fetchPhotos();
+  },
 };
 </script>

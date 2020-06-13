@@ -1,25 +1,7 @@
-// import axios from 'axios';
-
-const fakePhotos = [];
-for (let i = 0; i < 25; i += 1) {
-  fakePhotos.push({
-    id: i,
-    src: `https://picsum.photos/500/300?image=${i * 5 + 9}`,
-    lazySrc: `https://picsum.photos/10/6?image=${i * 5 + 9}`,
-    is_liked: false,
-    name: `image ${i}`,
-    date: 'March 31, 2019',
-    time: '9h32',
-    location: 'Paris, France',
-    camera: 'Nexus 5, Android',
-    lastModification: 'June 2, 2019',
-    lastModificationTime: '6h33',
-    tags: ['Dog', 'Holidays'],
-  });
-}
+import axios from 'axios';
 
 const state = {
-  photos: fakePhotos,
+  photos: [],
 };
 
 const getters = {
@@ -27,14 +9,16 @@ const getters = {
 };
 
 const actions = {
-  async fetchTodos({ commit }) {
-    const response = state.photos;
-    commit('setTodos', response);
+  async fetchPhotos({ commit }) {
+    const response = await axios.get(
+      'http://127.0.0.1:8000/api/photos/',
+    );
+    commit('setPhotos', response.data);
   },
 };
 
 const mutations = {
-  setTodos: (state_, photos) => {
+  setPhotos: (state_, photos) => {
     const s = state_;
     s.photos = photos;
   },

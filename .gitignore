@@ -10,7 +10,6 @@ geckodriver.log
 # local env files
 .env.local
 .env.*.local
-/tmp
 
 # Log files
 npm-debug.log*
