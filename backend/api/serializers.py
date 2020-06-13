@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from .models import Image
+from .models import Photo
 
 
-class ImageSerializer(serializers.HyperlinkedModelSerializer):
+class PhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Image
+        model = Photo
         fields = ['path', 'name', 'date']

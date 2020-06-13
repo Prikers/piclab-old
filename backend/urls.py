@@ -5,7 +5,7 @@ from rest_framework import routers
 from .api import views
 
 router = routers.DefaultRouter()
-router.register(r'images', views.ImageViewSet)
+router.register(r'photos', views.PhotoViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
