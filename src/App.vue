@@ -15,31 +15,31 @@
             <v-list-item-action>
               <v-icon>mdi-view-dashboard</v-icon>
             </v-list-item-action>
-            <v-list-item-content>MELAINE</v-list-item-content>
+            <v-list-item-content>Dashboard</v-list-item-content>
           </v-list-item>
           <v-list-item link to='/gallery'>
             <v-list-item-action>
               <v-icon>mdi-image-multiple</v-icon>
             </v-list-item-action>
-            <v-list-item-content></v-list-item-content>
+            <v-list-item-content>Gallery</v-list-item-content>
           </v-list-item>
           <v-list-item link to='/face-identification'>
             <v-list-item-action>
               <v-icon>mdi-account-search</v-icon>
             </v-list-item-action>
-            <v-list-item-content></v-list-item-content>
+            <v-list-item-content>Face Recognition</v-list-item-content>
           </v-list-item>
           <v-list-item link to="/deduplicator">
             <v-list-item-action>
               <v-icon>mdi-book-remove-multiple</v-icon>
             </v-list-item-action>
-            <v-list-item-content></v-list-item-content>
+            <v-list-item-content>Deduplication</v-list-item-content>
           </v-list-item>
           <v-list-item link to="/smart-art">
             <v-list-item-action>
               <v-icon>mdi-image-frame</v-icon>
             </v-list-item-action>
-            <v-list-item-content></v-list-item-content>
+            <v-list-item-content>Smart Art</v-list-item-content>
           </v-list-item>
         </v-list>
 
@@ -69,12 +69,11 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
+      <v-btn text large to='/login'>
+        <v-icon class='mr-2'>mdi-account-check</v-icon> Login
       </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
+      <v-btn text large to='/register'>
+        <v-icon class='mr-2'>mdi-account-plus</v-icon> Register
       </v-btn>
 
     </v-app-bar>
