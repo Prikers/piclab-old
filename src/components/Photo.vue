@@ -44,7 +44,7 @@
 
 <script>
 export default {
-  name: 'Photos',
+  name: 'Photo',
   props: ['photo'],
 };
 </script>

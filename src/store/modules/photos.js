@@ -18,9 +18,8 @@ const actions = {
 };
 
 const mutations = {
-  setPhotos: (state_, photos) => {
-    const s = state_;
-    s.photos = photos;
+  setPhotos: (state, photos) => {
+    state.photos = photos;
   },
 };
 
