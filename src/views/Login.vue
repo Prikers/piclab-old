@@ -67,7 +67,7 @@ export default {
       required: (v) => !!v || 'This field is required',
       minPassword: (v) => v.length >= 8 || 'The password should be at least 8 characters',
       minUsername: (v) => v.length >= 3 || 'The username should be at least 3 characters',
-      maxUsername: (v) => v.length < 20 || 'The username should be less than 20 characters',
+      maxUsername: (v) => v.length < 30 || 'The username should be less than 20 characters',
     },
   }),
   methods: {

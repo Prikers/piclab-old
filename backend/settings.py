@@ -64,6 +64,8 @@ CORS_ORIGIN_WHITELIST = (
 
 ROOT_URLCONF = 'backend.urls'
 
+AUTH_USER_MODEL = 'user.CustomUser'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
