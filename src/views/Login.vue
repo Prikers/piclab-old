@@ -76,7 +76,7 @@ export default {
         password: this.password,
       };
       this.$store.dispatch('login', data)
-        .then(() => this.$router.push('/dashboard'))
+        .then(() => this.$router.push(this.$route.query.redirect || '/dashboard'))
         /* eslint-disable */ // TODO properly handle errors before production
         .catch((err) => console.log(err));
     },
