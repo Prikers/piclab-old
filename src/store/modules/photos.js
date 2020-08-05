@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const REST_ENDPOINT = 'http://localhost:8000/';
+
 const state = {
   photos: [],
 };
@@ -10,9 +12,8 @@ const getters = {
 
 const actions = {
   async fetchPhotos({ commit }) {
-    const response = await axios.get(
-      'http://127.0.0.1:8000/api/photos/',
-    );
+    console.log(axios.defaults.headers.common);
+    const response = await axios.get(`${REST_ENDPOINT}api/photos/`);
     commit('setPhotos', response.data);
   },
 };

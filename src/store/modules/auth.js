@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const REST_ENDPOINT = 'http://localhost:8000/';
+
 const state = {
   status: '',
   token: localStorage.getItem('token') || '',
@@ -19,12 +21,12 @@ const actions = {
   login({ commit }, user) {
     return new Promise((resolve, reject) => {
       commit('login_request');
-      axios.post('http://localhost:8000/api/token/', user)
+      axios.post(`${REST_ENDPOINT}api/token/`, user)
         .then((resp) => {
           const { refresh, access } = resp.data;
           localStorage.setItem('token', access);
           localStorage.setItem('refresh_token', refresh);
-          axios.defaults.headers.common.Authorization = access;
+          axios.defaults.headers.common['Authorization'] = `Bearer ${access}`; // eslint-disable-line
           commit('login_success', access, refresh, user);
           resolve(resp);
         })
@@ -41,7 +43,7 @@ const actions = {
   register({ commit }, user) {
     return new Promise((resolve, reject) => {
       commit('register_request');
-      axios.post('http://localhost:8000/api/register/', user)
+      axios.post(`${REST_ENDPOINT}api/register/`, user)
         .then((resp) => {
           const createdUser = resp.data;
           commit('register_success', createdUser);
