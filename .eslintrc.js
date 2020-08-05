@@ -21,6 +21,6 @@ module.exports = {
   rules: {
     // 'no-param-reassign': [2, {'props': false}],
     'no-param-reassign' : ['error', {'props': true, 'ignorePropertyModificationsFor': ['state']}],
-    'no-shadow': ['error', {'allow': ['state']}]
+    'no-shadow': ['error', {'allow': ['state', 'user']}]
   },
 };

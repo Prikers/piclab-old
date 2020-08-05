@@ -17,12 +17,11 @@
               v-model="valid"
             >
               <v-text-field
-                v-model="username"
-                label="Username"
-                prepend-icon="mdi-account"
-                type="text"
-                :rules="[rules.required, rules.minUsername, rules.maxUsername]"
-                hint="Between 3 and 20 characters"
+                v-model="email"
+                label="Email"
+                prepend-icon="mdi-email"
+                type="email"
+                :rules="[rules.required, rules.email]"
               ></v-text-field>
               <v-text-field
                 v-model="password"
@@ -43,7 +42,7 @@
             <v-btn
               color="primary"
               :disabled="!valid"
-              @click="validate"
+              @click="login"
             >
               Login
             </v-btn>
@@ -59,20 +58,27 @@
 export default {
   name: 'Login',
   data: () => ({
-    valid: true,
-    username: '',
+    email: '',
     password: '',
+    valid: true,
     showPassword: false,
     rules: {
       required: (v) => !!v || 'This field is required',
       minPassword: (v) => v.length >= 8 || 'The password should be at least 8 characters',
-      minUsername: (v) => v.length >= 3 || 'The username should be at least 3 characters',
-      maxUsername: (v) => v.length < 30 || 'The username should be less than 20 characters',
+      email: (v) => !v || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid',
     },
   }),
   methods: {
-    validate() {
+    login() {
       this.$refs.form.validate();
+      const data = {
+        email: this.email,
+        password: this.password,
+      };
+      this.$store.dispatch('login', data)
+        .then(() => this.$router.push('/dashboard'))
+        /* eslint-disable */ // TODO properly handle errors before production
+        .catch((err) => console.log(err));
     },
   },
 };

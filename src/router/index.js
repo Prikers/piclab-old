@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '../store';
 
 import Dashboard from '../views/Dashboard.vue';
 import Deduplicator from '../views/Deduplicator.vue';
@@ -18,6 +19,9 @@ const routes = [
     path: '/',
     name: 'landing-page',
     component: LandingPage,
+    meta: {
+      allowAnonymous: true,
+    },
   },
   {
     path: '/dashboard',
@@ -53,16 +57,33 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register,
+    meta: {
+      allowAnonymous: true,
+    },
   },
   {
     path: '/login',
     name: 'login',
     component: Login,
+    meta: {
+      allowAnonymous: true,
+    },
   },
 ];
 
 const router = new VueRouter({
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (!to.meta.allowAnonymous && !store.getters.isLoggedIn) {
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath },
+    });
+  } else {
+    next();
+  }
 });
 
 export default router;

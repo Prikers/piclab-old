@@ -61,7 +61,7 @@
             <v-btn
               color="primary"
               :disabled="!valid"
-              @click="validate"
+              @click="register"
             >
               Register
             </v-btn>
@@ -93,9 +93,21 @@ export default {
     },
   }),
   methods: {
-    validate() {
+    register() {
       this.$refs.form.validate();
-    },
+      const data = {
+        email: this.email,
+        username: this.username,
+        password: this.password1,
+        password_confirm: this.password2,
+      };
+      this.$store.dispatch('register', data)
+        .then(() => {
+          this.$router.push('/login');
+        })
+        /* eslint-disable */ // TODO properly handle errors before production
+        .catch(err => console.log(err))
+    }
   },
   computed: {
     passwordConfirmationRule() {

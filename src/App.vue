@@ -69,11 +69,14 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text large to='/login'>
+      <v-btn v-if="!isLoggedIn" text large to='/login'>
         <v-icon class='mr-2'>mdi-account-check</v-icon> Login
       </v-btn>
-      <v-btn text large to='/register'>
+      <v-btn v-if="!isLoggedIn" text large to='/register'>
         <v-icon class='mr-2'>mdi-account-plus</v-icon> Register
+      </v-btn>
+      <v-btn v-else text large @click="logout">
+        <v-icon class='mr-2'>mdi-account</v-icon> Logout
       </v-btn>
 
     </v-app-bar>
@@ -94,5 +97,19 @@ export default {
   data: () => ({
     //
   }),
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('logout')
+        .then(() => {
+          this.$router.push('/');
+        });
+    },
+  },
+  // TODO: handle expired tokens
 };
 </script>

@@ -5,7 +5,7 @@ const state = {
 };
 
 const getters = {
-  allPhotos: (state_) => state_.photos,
+  allPhotos: (state) => state.photos,
 };
 
 const actions = {
