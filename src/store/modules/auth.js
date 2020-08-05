@@ -26,7 +26,7 @@ const actions = {
           const { refresh, access } = resp.data;
           localStorage.setItem('token', access);
           localStorage.setItem('refresh_token', refresh);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${access}`; // eslint-disable-line
+          axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
           commit('login_success', access, refresh, user);
           resolve(resp);
         })
@@ -34,6 +34,7 @@ const actions = {
           commit('login_error', err);
           localStorage.removeItem('token');
           localStorage.removeItem('refresh_token');
+          axios.defaults.headers.common['Authorization'] = '';
           reject(err);
         });
     });
@@ -60,6 +61,7 @@ const actions = {
   logout({ commit }) {
     localStorage.removeItem('token');
     localStorage.removeItem('refresh_token');
+    axios.defaults.headers.common['Authorization'] = '';
     commit('logout');
   },
 
