@@ -83,6 +83,7 @@
 
     <!-- MAIN CONTENT -->
     <v-content>
+      <Notification />
       <v-container fluid>
         <router-view></router-view>
       </v-container>
@@ -93,14 +94,17 @@
 
 <script>
 import axios from 'axios';
+import Notification from './components/Notification.vue';
 import router from './router';
 import store from './store';
 
 export default {
   name: 'piclab',
   data: () => ({
-    //
   }),
+  components: {
+    Notification,
+  },
   computed: {
     isLoggedIn() {
       return this.$store.getters.isLoggedIn;

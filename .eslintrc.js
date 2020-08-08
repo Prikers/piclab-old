@@ -21,7 +21,7 @@ module.exports = {
   rules: {
     'dot-notation': 0,
     // 'no-param-reassign': [2, {'props': false}],
-    'no-param-reassign' : ['error', {'props': true, 'ignorePropertyModificationsFor': ['state']}],
+    'no-param-reassign' : ['error', {'props': true, 'ignorePropertyModificationsFor': ['state', 'notification']}],
     'no-shadow': ['error', {'allow': ['state', 'user']}]
   },
 };
