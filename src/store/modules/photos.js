@@ -12,7 +12,6 @@ const getters = {
 
 const actions = {
   async fetchPhotos({ commit }) {
-    console.log(axios.defaults.headers.common);
     const response = await axios.get(`${REST_ENDPOINT}api/photos/`);
     commit('setPhotos', response.data);
   },

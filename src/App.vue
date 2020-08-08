@@ -92,6 +92,10 @@
 </template>
 
 <script>
+import axios from 'axios';
+import router from './router';
+import store from './store';
+
 export default {
   name: 'piclab',
   data: () => ({
@@ -110,6 +114,49 @@ export default {
         });
     },
   },
-  // TODO: handle expired tokens
+  created: () => {
+    // Handle expired tokens by intercepting 401 api calls
+    axios.interceptors.response.use(
+      (response) => response, // Return a successful response back to the calling service
+      (error) => {
+        console.log('TEST', error);
+        // 1. Return non authentication-related errors back to the calling service
+        if (error.response.status !== 401) {
+          return new Promise((resolve, reject) => {
+            reject(error);
+          });
+        }
+        // 2. Logout user if token refresh didn't work or user is disabled
+        console.log(error.config.url);
+        if (error.config.url.includes('/token/refresh/')) {
+          store.dispatch('logout');
+          router.push('/');
+          return new Promise((resolve, reject) => {
+            reject(error);
+          });
+        }
+
+        // 3. Otherwise, try request again with new token
+        return store.dispatch('refreshToken')
+          .then(() => {
+            // New request with new token
+            const { config } = error;
+            const token = localStorage.getItem('token');
+            config.headers['Authorization'] = `Bearer ${token}`;
+
+            return new Promise((resolve, reject) => {
+              axios.request(config).then((response) => {
+                resolve(response);
+              }).catch((error_) => {
+                reject(error_);
+              });
+            });
+          })
+          .catch((error_) => {
+            Promise.reject(error_);
+          });
+      },
+    );
+  },
 };
 </script>

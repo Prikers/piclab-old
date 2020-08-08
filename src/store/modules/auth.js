@@ -5,7 +5,7 @@ const REST_ENDPOINT = 'http://localhost:8000/';
 const state = {
   status: '',
   token: localStorage.getItem('token') || '',
-  refresh_token: localStorage.getItem('refresh_token') || '',
+  refreshToken: localStorage.getItem('refreshToken') || '',
   user: {},
   error: '',
 };
@@ -25,7 +25,7 @@ const actions = {
         .then((resp) => {
           const { refresh, access } = resp.data;
           localStorage.setItem('token', access);
-          localStorage.setItem('refresh_token', refresh);
+          localStorage.setItem('refreshToken', refresh);
           axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
           commit('login_success', access, refresh, user);
           resolve(resp);
@@ -33,7 +33,7 @@ const actions = {
         .catch((err) => {
           commit('login_error', err);
           localStorage.removeItem('token');
-          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('refreshToken');
           axios.defaults.headers.common['Authorization'] = '';
           reject(err);
         });
@@ -60,9 +60,27 @@ const actions = {
 
   logout({ commit }) {
     localStorage.removeItem('token');
-    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('refreshToken');
     axios.defaults.headers.common['Authorization'] = '';
     commit('logout');
+  },
+
+  refreshToken({ commit }) {
+    return new Promise((resolve, reject) => {
+      commit('refresh_request');
+      axios.post(`${REST_ENDPOINT}api/token/refresh/`, { refresh: localStorage.getItem('refreshToken') })
+        .then((resp) => {
+          localStorage.setItem('token', resp.data.access);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${resp.data.access}`;
+          commit('refresh_success', resp.data.access);
+          resolve(resp);
+        })
+        .catch((err) => {
+          commit('refresh_error', err);
+          reject(err);
+        });
+      // TODO alert user that account has been created
+    });
   },
 
 };
@@ -85,17 +103,28 @@ const mutations = {
   login_success(state, access, refresh, user) {
     state.status = 'login_success';
     state.token = access;
-    state.refresh_token = refresh;
+    state.refreshToken = refresh;
     state.user = user;
   },
   login_error(state, error) {
     state.status = 'login_error';
     state.error = error;
   },
+  refresh_request(state) {
+    state.status = 'refresh_loading';
+  },
+  refresh_success(state, access) {
+    state.status = 'refresh_success';
+    state.token = access;
+  },
+  refresh_error(state, error) {
+    state.status = 'refresh_error';
+    state.error = error;
+  },
   logout(state) {
     state.status = '';
     state.token = '';
-    state.refresh_token = '';
+    state.refreshToken = '';
   },
 };
 
