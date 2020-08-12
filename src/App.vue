@@ -123,7 +123,6 @@ export default {
     axios.interceptors.response.use(
       (response) => response, // Return a successful response back to the calling service
       (error) => {
-        console.log('TEST', error);
         // 1. Return non authentication-related errors back to the calling service
         if (error.response.status !== 401) {
           return new Promise((resolve, reject) => {
@@ -131,7 +130,6 @@ export default {
           });
         }
         // 2. Logout user if token refresh didn't work or user is disabled
-        console.log(error.config.url);
         if (error.config.url.includes('/token/refresh/')) {
           store.dispatch('logout');
           router.push('/');
@@ -157,7 +155,7 @@ export default {
             });
           })
           .catch((error_) => {
-            Promise.reject(error_);
+            throw error_;
           });
       },
     );

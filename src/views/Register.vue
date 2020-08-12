@@ -103,11 +103,20 @@ export default {
       };
       this.$store.dispatch('register', data)
         .then(() => {
+          this.$store.dispatch('notify', { text: 'Your account has been successfully created!' });
           this.$router.push('/login');
         })
-        /* eslint-disable */ // TODO properly handle errors before production
-        .catch(err => console.log(err))
-    }
+        .catch((err) => {
+          const errors = err.response.data;
+          if (errors) {
+            Object.values(errors).forEach((error) => {
+              error.forEach((detail) => this.$store.dispatch('notify', { text: detail, color: 'error' }));
+            });
+          } else {
+            this.$store.dispatch('notify', { text: err, color: 'error' });
+          }
+        });
+    },
   },
   computed: {
     passwordConfirmationRule() {

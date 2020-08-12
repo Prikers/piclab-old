@@ -38,7 +38,6 @@ const actions = {
           reject(err);
         });
     });
-    // TODO alert user for correct login
   },
 
   register({ commit }, user) {
@@ -54,7 +53,6 @@ const actions = {
           commit('register_error', err);
           reject(err);
         });
-      // TODO alert user that account has been created
     });
   },
 
@@ -79,7 +77,6 @@ const actions = {
           commit('refresh_error', err);
           reject(err);
         });
-      // TODO alert user that account has been created
     });
   },
 

@@ -76,9 +76,14 @@ export default {
         password: this.password,
       };
       this.$store.dispatch('login', data)
-        .then(() => this.$router.push(this.$route.query.redirect || '/dashboard'))
-        /* eslint-disable */ // TODO properly handle errors before production
-        .catch((err) => console.log(err));
+        .then(() => {
+          this.$store.dispatch('notify', { text: 'Successfull Login. Welcome back!' });
+          this.$router.push(this.$route.query.redirect || '/dashboard');
+        })
+        .catch((err) => {
+          const text = err.response.status === 400 ? 'Incorrect email/password combination. Please try again.' : err;
+          this.$store.dispatch('notify', { text, color: 'error' });
+        });
     },
   },
 };
