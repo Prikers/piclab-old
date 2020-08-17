@@ -12,6 +12,7 @@ from .user import views as user_views
 
 router = routers.DefaultRouter()
 router.register('photos', api_views.PhotoViewSet)
+router.register('projects', api_views.ProjectViewSet, basename='Project')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

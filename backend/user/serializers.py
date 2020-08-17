@@ -4,7 +4,7 @@ from rest_framework import serializers
 User = get_user_model()
 
 
-class RegisterSerializer(serializers.HyperlinkedModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
 
     password_confirm = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
