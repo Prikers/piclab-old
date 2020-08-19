@@ -6,7 +6,7 @@ ERROR_REGEX_USERNAME = 'Enter a valid username. This value may contain only lett
 ERROR_LENGTH_USERNAME = 'Enter a valid username. This value should be between 3 and 20 characters long.'
 
 
-class CustomUserManager(BaseUserManager):
+class UserManager(BaseUserManager):
     
     def create_user(self, email, username, password=None):
         if not email:
@@ -30,7 +30,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
 
-class CustomUser(AbstractBaseUser):
+class User(AbstractBaseUser):
 
     class Meta:
          verbose_name = "user"
@@ -50,7 +50,7 @@ class CustomUser(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
-    objects = CustomUserManager()
+    objects = UserManager()
 
     def __str__(self):
         return f'<User: {self.username}, Email: {self.email}>'

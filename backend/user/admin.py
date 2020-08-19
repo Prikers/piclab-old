@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 User = get_user_model()
 
 
-class CustomUserAdmin(UserAdmin):
+class UserAdmin(UserAdmin):
     list_display = ('email', 'username', 'date_joined', 'last_login', 'is_admin', 'is_staff')
     search_field = ('email', 'username')
     readonly_fields = ('date_joined', 'last_login')
@@ -15,5 +15,5 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ()
     fieldsets = ()
 
-admin.site.register(User, CustomUserAdmin)
+admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)

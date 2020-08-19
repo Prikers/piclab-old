@@ -64,7 +64,7 @@ CORS_ORIGIN_WHITELIST = (
 
 ROOT_URLCONF = 'backend.urls'
 
-AUTH_USER_MODEL = 'user.CustomUser'
+AUTH_USER_MODEL = 'user.User'
 
 TEMPLATES = [
     {
