@@ -13,8 +13,19 @@ class IsOwner(permissions.BasePermission):
 
 
 class PhotoViewSet(viewsets.ModelViewSet):
-    queryset = Photo.objects.all().order_by('-date')
     serializer_class = PhotoSerializer
+    permission_classes = (IsOwner,)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_queryset(self):
+        user = self.request.user
+        print(self.request.query_params)
+        print(self.request.data)
+        if user.is_authenticated:
+            return Photo.objects.filter(owner=user)
+        raise PermissionDenied()
 
 
 class ProjectViewSet(viewsets.ModelViewSet):

@@ -18,7 +18,7 @@ const getters = {
 
 const actions = {
 
-  login({ commit }, user) {
+  login({ commit, dispatch }, user) {
     return new Promise((resolve, reject) => {
       commit('login_request');
       axios.post(`${REST_ENDPOINT}api/token/`, user)
@@ -27,6 +27,7 @@ const actions = {
           localStorage.setItem('token', access);
           localStorage.setItem('refreshToken', refresh);
           axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+          dispatch('fetchProjects');
           commit('login_success', access, refresh, user);
           resolve(resp);
         })
@@ -56,10 +57,11 @@ const actions = {
     });
   },
 
-  logout({ commit }) {
+  logout({ commit, dispatch }) {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     axios.defaults.headers.common['Authorization'] = '';
+    dispatch('clearProjects');
     commit('logout');
   },
 

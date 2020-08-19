@@ -24,6 +24,9 @@ const actions = {
   setCurrentProject({ commit }, project) {
     commit('setCurrentProject', project);
   },
+  clearProjects({ commit }) {
+    commit('clearProjects');
+  },
 };
 
 const mutations = {
@@ -35,6 +38,9 @@ const mutations = {
   },
   addProject: (state, project) => {
     state.projects.push(project);
+  },
+  clearProjects: (state) => {
+    state.projects = [];
   },
 };
 

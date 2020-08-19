@@ -11,7 +11,7 @@ from .api import views as api_views
 from .user import views as user_views
 
 router = routers.DefaultRouter()
-router.register('photos', api_views.PhotoViewSet)
+router.register('photos', api_views.PhotoViewSet, basename='Photo')
 router.register('projects', api_views.ProjectViewSet, basename='Project')
 
 urlpatterns = [
