@@ -21,10 +21,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        print(self.request.query_params)
-        print(self.request.data)
+        project = self.request.query_params.get('project')
         if user.is_authenticated:
-            return Photo.objects.filter(owner=user)
+            return Photo.objects.filter(owner=user, project=project)
         raise PermissionDenied()
 
 

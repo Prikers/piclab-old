@@ -12,4 +12,4 @@ class PhotoSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ['name', 'date_created']
+        fields = ['id', 'name', 'date_created']

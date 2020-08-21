@@ -103,8 +103,5 @@ export default {
     },
     ...mapActions(['fetchProjects', 'setCurrentProject']),
   },
-  created() {
-    this.fetchProjects();
-  },
 };
 </script>
