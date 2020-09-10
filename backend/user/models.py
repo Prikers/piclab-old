@@ -60,3 +60,13 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+
+class Profile(models.Model):
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    current_project = models.ForeignKey('api.Project', on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        username = User.objects.get(pk=self.user.id).username
+        return f'Profile of {username}'
