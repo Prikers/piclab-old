@@ -32,7 +32,18 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+class UserSerialiazer(serializers.ModelSerializer):
+
+    projects = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'projects']
+
+
 class ProfileSerializer(serializers.ModelSerializer):
+
+    user = UserSerialiazer(read_only=True) 
 
     class Meta:
         model = Profile
