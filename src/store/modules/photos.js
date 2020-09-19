@@ -12,7 +12,7 @@ const getters = {
 
 const actions = {
   async fetchPhotos({ commit, rootState }) {
-    const { currentProject } = rootState.projects;
+    const { currentProject } = rootState.profiles;
     const response = await axios.get(`${REST_ENDPOINT}api/photos/`, {
       params: {
         project: currentProject.id,

@@ -52,6 +52,17 @@
         >
           Show A Notification
         </v-btn>
+
+        <!-- Button for testing purposes. TODO: delete -->
+        <v-btn
+          color="amber"
+          dark
+          @click="testStuff"
+          class="ma-4"
+        >
+          Test A Request
+        </v-btn>
+
       </v-row>
 
     </v-container>
@@ -94,6 +105,10 @@ export default {
         });
       this.projectName = '';
       this.dialog = false;
+    },
+
+    testStuff() {
+      this.$store.dispatch('fetchUserProfile');
     },
   },
 };

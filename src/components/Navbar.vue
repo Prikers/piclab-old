@@ -101,7 +101,7 @@ export default {
           this.$router.push('/');
         });
     },
-    ...mapActions(['fetchProjects', 'setCurrentProject']),
+    ...mapActions(['setCurrentProject']),
   },
 };
 </script>

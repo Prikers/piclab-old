@@ -27,7 +27,7 @@ const actions = {
           localStorage.setItem('token', access);
           localStorage.setItem('refreshToken', refresh);
           axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
-          dispatch('fetchProjects');
+          dispatch('fetchUserProfile');
           commit('login_success', access, refresh, user);
           resolve(resp);
         })

@@ -91,7 +91,7 @@ export default {
     );
     // Fetch settings for current user
     if (store.getters.isLoggedIn) {
-      store.dispatch('fetchProjects');
+      store.dispatch('fetchUserProfile');
     }
   },
 };
