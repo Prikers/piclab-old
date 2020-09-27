@@ -14,6 +14,7 @@
         <v-card-title class="title white--text pb-0">
           <v-row class="fill-height justify-end">
             <v-btn
+              @click="toggleLikePhoto(photo)"
               :class="{ 'show-btns': hover }"
               color="rgba(255, 255, 255, 0)"
               icon
@@ -43,9 +44,15 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'Photo',
   props: ['photo'],
+  methods: {
+    ...mapActions(['toggleLikePhoto']),
+  },
+
 };
 </script>
 
