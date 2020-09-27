@@ -17,8 +17,8 @@
 </template>
 
 <script>
-import Photo from '@/components/Photo.vue'; // @ is an alias to /src
 import { mapGetters, mapActions } from 'vuex';
+import Photo from '../components/Photo.vue';
 
 export default {
   name: 'Gallery',

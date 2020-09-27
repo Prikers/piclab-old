@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
-from backend.api.serializers import ProjectSerializer
+from piclab.api.serializers import ProjectSerializer
 from .models import Profile
 
 User = get_user_model()
