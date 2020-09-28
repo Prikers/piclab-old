@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
 
-    'piclab.api',
-    'piclab.user',
+    'piclab.api.apps.ApiConfig',
+    'piclab.user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [
