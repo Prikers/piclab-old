@@ -24,7 +24,7 @@ class UserAdmin(UserAdmin):
     fieldsets = ()
 
     def profile_link(self, obj):
-        url = reverse('admin:user_profile_change', args=(obj.profile.id,))
+        url = reverse('admin:user_profile_changelist') + '?' + urlencode({'id': f'{obj.profile.id}'})
         return format_html(f'<a href="{url}">Profile</a>')
 
     profile_link.short_description = 'profile'
@@ -39,11 +39,11 @@ class ProfileAdmin(admin.ModelAdmin):
     readonly_fields = ('user',)
 
     def user_link(self, obj):
-        url = reverse('admin:user_user_change', args=(obj.user.id,))
+        url = reverse('admin:user_user_changelist') + '?' + urlencode({'id': f'{obj.user.id}'})
         return format_html(f'<a href="{url}">{obj.user.username}</a>')
     
     def current_project_link(self, obj):
-        url = reverse('admin:api_project_change', args=(obj.current_project.id,))
+        url = reverse('admin:api_project_changelist') + '?' + urlencode({'id': f'{obj.current_project.id}'})
         return format_html(f'<a href="{url}">{obj.current_project.name}</a>')
     
     def projects_link(self, obj):
