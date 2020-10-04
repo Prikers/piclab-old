@@ -4,7 +4,6 @@ from django.dispatch import receiver
 from .models import Profile
 
 User = get_user_model()
-print(User)
 
 
 @receiver(post_save, sender=User)

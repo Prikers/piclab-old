@@ -7,7 +7,7 @@ from .models import Photo, Project
 
 
 @admin.register(Project)
-class PersonAdmin(admin.ModelAdmin):
+class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'owner_link', 'date_created', 'count_photos')
     search_fields = ('name',)
     readonly_fields = ('owner', 'date_created')
@@ -29,7 +29,7 @@ class PersonAdmin(admin.ModelAdmin):
 class PhotoAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'owner_link', 'project_link', 'date', 'photo_link')
     search_fields = ('name',)
-    readonly_fields = ('owner', 'date', 'owner', 'project')
+    readonly_fields = ('owner', 'date', 'project')
 
     def owner_link(self, obj):
         url = reverse('admin:user_user_changelist') + '?' + urlencode({'id': f'{obj.owner.id}'})
@@ -40,7 +40,7 @@ class PhotoAdmin(admin.ModelAdmin):
         return format_html(f'<a href="{url}">{obj.project.name}</a>')
 
     def photo_link(self, obj):
-        return format_html(f'<a href="{obj.src}">link</a>')
+        return format_html(f'<a href="{obj.image.url}">link</a>')
 
     owner_link.short_description = 'owner'
     project_link.short_description = 'project'
