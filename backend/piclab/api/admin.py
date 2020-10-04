@@ -27,9 +27,9 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'owner_link', 'project_link', 'date', 'photo_link')
+    list_display = ('name', 'id', 'owner_link', 'project_link', 'date_created', 'photo_link')
     search_fields = ('name',)
-    readonly_fields = ('owner', 'date', 'project')
+    readonly_fields = ('owner', 'date_created', 'project')
 
     def owner_link(self, obj):
         url = reverse('admin:user_user_changelist') + '?' + urlencode({'id': f'{obj.owner.id}'})

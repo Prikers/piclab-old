@@ -22,12 +22,12 @@ class Photo(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='photos')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
     image = models.ImageField(upload_to='photos')
-    name = models.CharField(max_length=100)
-    date = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(max_length=50)
+    date_created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     is_liked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'<Photo: {self.name} on {self.date.strftime("%Y-%m-%d")}>'
+        return f'<Photo: {self.name} on {self.date_created.strftime("%Y-%m-%d")}>'
     
     class Meta:
-        ordering = ['-date']
+        ordering = ['-date_created']

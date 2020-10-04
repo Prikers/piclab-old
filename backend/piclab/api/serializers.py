@@ -5,14 +5,20 @@ from .models import Photo, Project
 
 
 class PhotoSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(required=False)
     class Meta:
         model = Photo
-        fields = ['id', 'image', 'date', 'is_liked', 'project']
+        fields = [
+            'id', 'image', 'name', 'date_created',
+            'is_liked', 'project'
+        ]
 
     def create(self, validated_data):
         data = validated_data
+        name = str(validated_data.get('image'))
+        name = name if len(name) < 50 else (name[:48] + '..')
         data['name'] = validated_data.get('image')
-        data['date'] = now()
         photo = Photo.objects.create(**data)
         return photo
 
