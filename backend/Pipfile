@@ -10,6 +10,9 @@ django = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
+django-storages = "*"
+google-cloud-storage = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.7"

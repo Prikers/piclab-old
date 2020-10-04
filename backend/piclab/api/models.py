@@ -21,7 +21,7 @@ class Photo(models.Model):
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='photos')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
-    src = models.CharField(max_length=256)
+    image = models.ImageField(upload_to='photos')
     name = models.CharField(max_length=100)
     date = models.DateTimeField(null=True, blank=True)
     is_liked = models.BooleanField(default=False)

@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from rest_framework import serializers
 
 from .models import Photo, Project
@@ -6,7 +7,14 @@ from .models import Photo, Project
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
-        fields = ['id', 'src', 'name', 'date', 'is_liked', 'project']
+        fields = ['id', 'image', 'date', 'is_liked', 'project']
+
+    def create(self, validated_data):
+        data = validated_data
+        data['name'] = validated_data.get('image')
+        data['date'] = now()
+        photo = Photo.objects.create(**data)
+        return photo
 
 
 class ProjectSerializer(serializers.ModelSerializer):
