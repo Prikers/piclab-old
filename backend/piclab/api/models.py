@@ -17,17 +17,22 @@ class Project(models.Model):
         ordering = ['-date_created']
 
 
+def upload_path(instance, filename):
+    folder = 'photos'
+    return f'{folder}/{instance.owner.email}/{instance.project.name}/{filename}'
+
+
 class Photo(models.Model):
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='photos')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
-    image = models.ImageField(upload_to='photos')
+    image = models.ImageField(upload_to=upload_path)
     name = models.CharField(max_length=50)
     date_created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     is_liked = models.BooleanField(default=False)
 
     def __str__(self):
         return f'<Photo: {self.name} on {self.date_created.strftime("%Y-%m-%d")}>'
-    
+
     class Meta:
         ordering = ['-date_created']

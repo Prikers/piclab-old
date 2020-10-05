@@ -16,9 +16,9 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         data = validated_data
+        # Extract the name from the image and shorten it if necessary
         name = str(validated_data.get('image'))
-        name = name if len(name) < 50 else (name[:48] + '..')
-        data['name'] = validated_data.get('image')
+        data['name'] = name if len(name) < 50 else (name[:48] + '..')
         photo = Photo.objects.create(**data)
         return photo
 
