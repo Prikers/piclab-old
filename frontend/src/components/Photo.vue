@@ -6,8 +6,7 @@
       :class="{ 'on-hover': hover }"
     >
       <v-img
-        :src="photo.src"
-        :lazy-src="photo.lazySrc"
+        :src="photo.image"
         aspect-ratio="1"
         class="d-flex flex-row align-end"
       >
