@@ -20,6 +20,7 @@ const actions = {
     });
     commit('setPhotos', response.data);
   },
+
   async toggleLikePhoto({ commit, rootState }, photo) {
     const like = !photo.is_liked;
     const { currentProject } = rootState.profiles;
@@ -30,6 +31,16 @@ const actions = {
     );
     commit('likePhoto', response.data);
   },
+
+  async uploadPhotos({ commit, rootState }, formData) {
+    formData.append('project', rootState.profiles.currentProject.id);
+    const response = await axios.post(
+      `${REST_ENDPOINT}api/photos/`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    );
+    commit('addPhotos', response.data);
+  },
 };
 
 const mutations = {
@@ -38,6 +49,9 @@ const mutations = {
   },
   likePhoto: (state, photo) => {
     state.photos = [...state.photos.map((p) => (p.id !== photo.id ? p : photo))];
+  },
+  addPhotos: (state, newPhotos) => {
+    state.photos = state.photos.concat(newPhotos);
   },
 };
 

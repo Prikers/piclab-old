@@ -65,15 +65,20 @@
 
       </v-row>
 
+      <photo-file-upload></photo-file-upload>
+
     </v-container>
   </div>
 </template>
 
 <script>
-// import axios from 'axios';
+import PhotoFileUpload from '../components/PhotoFileUpload.vue';
 
 export default {
   name: 'Dashboard',
+  components: {
+    PhotoFileUpload,
+  },
 
   data: () => ({
     dialog: false,
