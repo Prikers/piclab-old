@@ -48,7 +48,9 @@ const mutations = {
     state.photos = photos;
   },
   likePhoto: (state, photo) => {
-    state.photos = [...state.photos.map((p) => (p.id !== photo.id ? p : photo))];
+    const index = state.photos.findIndex((p) => p.id === photo.id);
+    console.log(index);
+    state.photos[index].is_liked = photo.is_liked;
   },
   addPhotos: (state, newPhotos) => {
     state.photos = state.photos.concat(newPhotos);

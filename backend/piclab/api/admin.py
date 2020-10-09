@@ -27,7 +27,8 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'owner_link', 'project_link', 'date_created', 'photo_link')
+    list_display = ('name', 'id', 'owner_link', 'project_link',
+                    'date_created', 'like', 'photo_link')
     search_fields = ('name',)
     readonly_fields = ('owner', 'date_created', 'project')
 
@@ -41,7 +42,11 @@ class PhotoAdmin(admin.ModelAdmin):
 
     def photo_link(self, obj):
         return format_html(f'<a href="{obj.image.url}">link</a>')
+    
+    def like(self, obj):
+        return format_html('♥' if obj.is_liked else '')
 
     owner_link.short_description = 'owner'
     project_link.short_description = 'project'
     photo_link.short_description = 'link'
+    like.short_description = 'like'
