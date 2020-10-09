@@ -7,6 +7,8 @@ from .models import Photo, Project
 class PhotoSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(required=False)
+    image = serializers.ListField(child=serializers.ImageField(allow_empty_file=False))
+
     class Meta:
         model = Photo
         fields = [
@@ -15,12 +17,15 @@ class PhotoSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        data = validated_data
-        # Extract the name from the image and shorten it if necessary
-        name = str(validated_data.get('image'))
-        data['name'] = name if len(name) < 50 else (name[:48] + '..')
-        photo = Photo.objects.create(**data)
+        # Split all images
+        images = validated_data.pop('image')
+        for image in images:
+            # Extract the name from the image and shorten it if necessary
+            name = str(image)
+            name = name if len(name) < 50 else (name[:48] + '..')
+            photo = Photo.objects.create(image=image, name=name, **validated_data)
         return photo
+    
 
 
 class ProjectSerializer(serializers.ModelSerializer):

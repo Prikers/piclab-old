@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, status
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from .models import Photo, Project
 from .serializers import PhotoSerializer, ProjectSerializer
@@ -15,6 +17,7 @@ class IsOwner(permissions.BasePermission):
 class PhotoViewSet(viewsets.ModelViewSet):
     serializer_class = PhotoSerializer
     permission_classes = (IsOwner,)
+    parser_classes = (MultiPartParser, FormParser,)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
