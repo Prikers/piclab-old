@@ -23,8 +23,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': '/cloudsql/circular-fusion-290809:europe-west1:piclab',
+        'USER': 'postgres',
+        'PASSWORD': 'f2aBetvCM7gM192x',
+        'NAME': 'piclab-db',
     }
 }
 
