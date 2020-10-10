@@ -80,7 +80,9 @@ export default {
     },
     uploadPhotoFile() {
       const formData = new FormData();
-      formData.append('image', this.photoFiles[0]);
+      this.photoFiles.forEach((file) => {
+        formData.append('image', file);
+      });
       this.uploadPhotos(formData)
         .then(() => {
           const verbose = (this.photoFiles.length > 1) ? 'photos' : 'photo';
