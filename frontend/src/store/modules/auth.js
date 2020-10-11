@@ -1,6 +1,7 @@
 import axios from 'axios';
+import api from './api';
 
-const REST_ENDPOINT = 'http://localhost:8000/';
+const { API_URL } = api;
 
 const state = {
   status: '',
@@ -21,7 +22,7 @@ const actions = {
   login({ commit, dispatch }, user) {
     return new Promise((resolve, reject) => {
       commit('login_request');
-      axios.post(`${REST_ENDPOINT}api/token/`, user)
+      axios.post(`${API_URL}/token/`, user)
         .then((resp) => {
           const { refresh, access } = resp.data;
           localStorage.setItem('token', access);
@@ -44,7 +45,7 @@ const actions = {
   register({ commit }, user) {
     return new Promise((resolve, reject) => {
       commit('register_request');
-      axios.post(`${REST_ENDPOINT}api/register/`, user)
+      axios.post(`${API_URL}/register/`, user)
         .then((resp) => {
           const createdUser = resp.data;
           commit('register_success', createdUser);
@@ -68,7 +69,7 @@ const actions = {
   refreshToken({ commit }) {
     return new Promise((resolve, reject) => {
       commit('refresh_request');
-      axios.post(`${REST_ENDPOINT}api/token/refresh/`, { refresh: localStorage.getItem('refreshToken') })
+      axios.post(`${API_URL}/token/refresh/`, { refresh: localStorage.getItem('refreshToken') })
         .then((resp) => {
           localStorage.setItem('token', resp.data.access);
           axios.defaults.headers.common['Authorization'] = `Bearer ${resp.data.access}`;

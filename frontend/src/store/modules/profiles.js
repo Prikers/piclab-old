@@ -1,6 +1,7 @@
 import axios from 'axios';
+import api from './api';
 
-const REST_ENDPOINT = 'http://localhost:8000/';
+const { API_URL } = api;
 
 const state = {
   projects: [],
@@ -15,7 +16,7 @@ const getters = {
 
 const actions = {
   async fetchUserProfile({ commit }) {
-    const response = await axios.get(`${REST_ENDPOINT}api/profile/`);
+    const response = await axios.get(`${API_URL}/profile/`);
     const profile = response.data[0];
     const currentProject = profile.projects.filter((p) => p.id === profile.current_project)[0];
     commit('setCurrentProject', currentProject);
@@ -24,7 +25,7 @@ const actions = {
   },
   async createProject({ commit }, projectName) {
     const response = await axios.post(
-      `${REST_ENDPOINT}api/projects/`,
+      `${API_URL}/projects/`,
       { name: projectName },
     );
     commit('addProject', response.data);
@@ -32,7 +33,7 @@ const actions = {
   },
   async setCurrentProject({ commit, state }, project) {
     const response = await axios.put(
-      `${REST_ENDPOINT}api/profile/${state.profile.id}/`,
+      `${API_URL}/profile/${state.profile.id}/`,
       { current_project: project.id },
     );
     commit(
