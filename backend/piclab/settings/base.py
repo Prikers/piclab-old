@@ -63,8 +63,7 @@ GS_FILE_OVERWRITE = False
 GS_EXPIRATION = timedelta(seconds=7200)
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-# STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+STATICFILES_STORAGE = 'piclab.storage_backends.StaticGoogleCloudStorage'
 STATIC_URL = '/static/'
 
 # Internationalization
