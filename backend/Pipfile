@@ -14,6 +14,7 @@ django-storages = "*"
 google-cloud-storage = "*"
 pillow = "*"
 psycopg2 = "*"
+google-cloud-secret-manager = "*"
 
 [requires]
 python_version = "3.7"

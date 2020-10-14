@@ -1,0 +1,9 @@
+.gcloudignore
+.git
+.gitignore
+
+__pycache__/
+/setup.cfg
+
+Pipfile
+Pipfile.lock
