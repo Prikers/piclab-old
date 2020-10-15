@@ -31,12 +31,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS_ORIGIN_WHITELIST = (
-#     'http://localhost:8080',  # TODO set this correctly for production
-# )
-CORS_ORIGIN_ALLOW_ALL = True # If this is used then `CORS_ORIGIN_WHITELIST` will not have any effect
-CORS_ALLOW_CREDENTIALS = True
-
 ROOT_URLCONF = 'piclab.urls'
 AUTH_USER_MODEL = 'user.User'
 
@@ -58,9 +52,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'piclab.wsgi.application'
 
+# Google App Engine information
+GOOGLE_CLOUD_PROJECT = os.environ.get('GOOGLE_CLOUD_PROJECT')
+GOOGLE_CLOUD_REGION_ID = 'ew'
+GOOGLE_CLOUD_REGION = 'europe-west1'
+GOOGLE_CLOUD_HOST = f'{GOOGLE_CLOUD_PROJECT}.{GOOGLE_CLOUD_REGION_ID}.r.appspot.com'
+
 # Google Cloud Storage
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-GS_BUCKET_NAME = 'circular-fusion-290809.appspot.com'  # TODO get from environment variables
+GS_BUCKET_NAME = f'{GOOGLE_CLOUD_PROJECT}.appspot.com'
 GS_FILE_OVERWRITE = False
 GS_EXPIRATION = timedelta(seconds=7200)
 

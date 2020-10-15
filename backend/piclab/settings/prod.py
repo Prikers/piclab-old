@@ -1,12 +1,15 @@
 from piclab.settings.base import *
-from piclab.storage_backends import get_credentials
+from piclab.google_cloud import get_credentials, get_secret
 
 # Override base settings here for production
 DEBUG = False
-ALLOWED_HOSTS = ['*']  # TODO update for production
+ALLOWED_HOSTS = [GOOGLE_CLOUD_HOST]
+CORS_ORIGIN_WHITELIST = (
+    f'https://{GOOGLE_CLOUD_HOST}',
+)
+CORS_ALLOW_CREDENTIALS = True
 
-# SECRET_KEY = os.environ['SECRET_KEY']
-SECRET_KEY = 'c4#*be@5ud+#5biwv^p6nzp20m=k$@jef4-$q90e!%^qu!sd3n'  # TODO get from environment variables
+SECRET_KEY = get_secret('SECRET_KEY')
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -26,15 +29,11 @@ AUTH_PASSWORD_VALIDATORS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': '/cloudsql/circular-fusion-290809:europe-west1:piclab',
+        'HOST': f'/cloudsql/{GOOGLE_CLOUD_PROJECT}:{GOOGLE_CLOUD_REGION}:{get_secret("DATABASE_HOST")}',
         'USER': 'postgres',
-        'PASSWORD': 'f2aBetvCM7gM192x',
-        'NAME': 'piclab-db',
+        'PASSWORD': get_secret('DATABASE_PASSWORD'),
+        'NAME': get_secret('DATABASE_NAME'),
     }
 }
 
-GS_CREDENTIALS = get_credentials(
-    project_id='863654462708',  # TODO os.getenv('GOOGLE_CLOUD_PROJECT')
-    secret_id='CREDENTIALS',
-    version_id=1,
-)
+GS_CREDENTIALS = get_credentials('CREDENTIALS')
