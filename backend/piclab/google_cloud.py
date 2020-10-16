@@ -10,8 +10,10 @@ GOOGLE_CLOUD_PROJECT = os.environ.get('GOOGLE_CLOUD_PROJECT')
 
 
 class StaticGoogleCloudStorage(GoogleCloudStorage):
+    bucket_name = 'piclab-static'
     location = 'static/'
-    file_overwrite = False
+    file_overwrite = True
+    default_acl = 'publicRead'
 
 
 def get_secret(secret_id, project_id=GOOGLE_CLOUD_PROJECT, version_id=1):

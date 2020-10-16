@@ -58,27 +58,22 @@ GOOGLE_CLOUD_REGION_ID = 'ew'
 GOOGLE_CLOUD_REGION = 'europe-west1'
 GOOGLE_CLOUD_HOST = f'{GOOGLE_CLOUD_PROJECT}.{GOOGLE_CLOUD_REGION_ID}.r.appspot.com'
 
-# Google Cloud Storage
+# Google Cloud Storage for media files
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_BUCKET_NAME = f'{GOOGLE_CLOUD_PROJECT}.appspot.com'
 GS_FILE_OVERWRITE = False
 GS_EXPIRATION = timedelta(seconds=7200)
 
 # Static files (CSS, JavaScript, Images)
-STATICFILES_STORAGE = 'piclab.storage_backends.StaticGoogleCloudStorage'
+STATICFILES_STORAGE = 'piclab.google_cloud.StaticGoogleCloudStorage'
 STATIC_URL = '/static/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Authentication
