@@ -19,7 +19,7 @@ class Project(models.Model):
 
 def upload_path(instance, filename):
     folder = 'photos'
-    return f'{folder}/{instance.owner.email}/{instance.project.name}/{filename}'
+    return f'{folder}/{instance.owner.email}/{instance.project.name}/originals/{filename}'
 
 
 class Photo(models.Model):
