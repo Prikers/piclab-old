@@ -20,6 +20,9 @@ class Project(models.Model):
 
     class Meta:
         ordering = ['-date_created']
+        constraints = [
+            models.UniqueConstraint(fields=['owner', 'name'], name='unique_name_per_user')
+        ]
 
 
 def upload_path(instance, filename):

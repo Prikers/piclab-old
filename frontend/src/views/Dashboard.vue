@@ -29,7 +29,7 @@
                     <v-text-field
                       label="Project Name"
                       v-model="projectName"
-                      :rules="[rules.required, rules.maxLength, rules.specialCharacters]"
+                      :rules="[rules.required, rules.maxLength, rules.specialCharacters, projectNameAlreadyExists]"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -91,6 +91,11 @@ export default {
   }),
 
   methods: {
+    projectNameAlreadyExists(value) {
+      const message = 'This project name already exists: please pick another one'
+      return this.$store.getters.allProjects.some((project) => project.name === value) ? message : true;
+    },
+
     showNotification() {
       this.$store.dispatch('notify', {
         text: 'First Notification of the night',
