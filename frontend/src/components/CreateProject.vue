@@ -30,8 +30,22 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="closeDialog">Close</v-btn>
-        <v-btn color="primary" text @click="createProject">Create Project</v-btn>
+        <v-btn
+          color="primary"
+          text
+          @click="closeDialog"
+        >
+          Close
+        </v-btn>
+        <v-btn
+          color="primary"
+          text
+          :loading="loading"
+          :disabled="loading"
+          @click="createProject"
+        >
+          Create Project
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -44,6 +58,7 @@ export default {
   data: () => ({
     dialog: false,
     projectName: '',
+    loading: false,
     rules: {
       required: (v) => !!v || 'This field is required',
       maxLength: (v) => v.length < 30 || 'The name should be less than 30 characters long',
@@ -61,6 +76,7 @@ export default {
       this.dialog = false;
     },
     createProject() {
+      this.loading = true;
       const name = this.projectName;
       this.$store.dispatch('createProject', name)
         .then(() => {
@@ -69,6 +85,7 @@ export default {
         .catch((err) => {
           this.$store.dispatch('notify', { text: err, color: 'error' });
         });
+      this.loading = false;
       this.projectName = '';
       this.dialog = false;
     },

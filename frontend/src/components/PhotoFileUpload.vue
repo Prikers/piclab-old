@@ -51,8 +51,22 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="closeDialogUpload">Close</v-btn>
-        <v-btn color="primary" text @click="uploadPhotoFile">Upload</v-btn>
+        <v-btn
+          color="primary"
+          text
+          @click="closeDialogUpload"
+        >
+          Close
+        </v-btn>
+        <v-btn
+          color="primary"
+          text
+          :loading="loading"
+          :disabled="loading"
+          @click="uploadPhotoFile"
+          >
+            Upload
+          </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -67,6 +81,7 @@ export default {
   data: () => ({
     photoFiles: [],
     dialogUpload: false,
+    loading: false,
   }),
 
   methods: {
@@ -79,6 +94,7 @@ export default {
       this.photoFiles = this.$refs.photoFilesInput.files;
     },
     uploadPhotoFile() {
+      this.loading = true;
       const formData = new FormData();
       this.photoFiles.forEach((file) => {
         formData.append('image', file);
@@ -87,9 +103,11 @@ export default {
         .then(() => {
           const verbose = (this.photoFiles.length > 1) ? 'photos' : 'photo';
           this.notify({ text: `${this.photoFiles.length} new ${verbose} successfully uploaded!` });
+          this.loading = false;
           this.closeDialogUpload();
         })
         .catch((err) => {
+          this.loading = false;
           this.notify({ text: err, color: 'error' });
         });
     },
