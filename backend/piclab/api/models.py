@@ -1,12 +1,17 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 
 User = get_user_model()
+
+ERROR_REGEX_PROJECT = 'Enter a valid project name. This value may only contain letters, numbers or one of the following characters: @, -, _'
 
 
 class Project(models.Model):
 
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, validators=[
+        RegexValidator(regex='^[\w.@+\-]+$', message=ERROR_REGEX_PROJECT)
+    ])
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
     date_created = models.DateTimeField(verbose_name='date created', auto_now_add=True)
 

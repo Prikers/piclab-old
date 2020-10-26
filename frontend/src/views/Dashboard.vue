@@ -29,7 +29,7 @@
                     <v-text-field
                       label="Project Name"
                       v-model="projectName"
-                      required
+                      :rules="[rules.required, rules.maxLength, rules.specialCharacters]"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -83,6 +83,11 @@ export default {
   data: () => ({
     dialog: false,
     projectName: '',
+    rules: {
+      required: (v) => !!v || 'This field is required',
+      maxLength: (v) => v.length < 30 || 'The name should be less than 30 characters long',
+      specialCharacters: (v) => !v || /^[\w@-]+$/.test(v) || 'Project name should only contain letters, numbers, @, _ or - (no blank space)',
+    },
   }),
 
   methods: {
