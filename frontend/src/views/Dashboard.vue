@@ -5,7 +5,7 @@
       <h1>Dashboard</h1>
 
       <v-row>
-        
+
         <create-project></create-project>
 
         <!-- Show a notification -->

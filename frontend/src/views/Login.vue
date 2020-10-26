@@ -41,7 +41,8 @@
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
-              :disabled="!valid"
+              :loading="loading"
+              :disabled="!valid || loading"
               @click="login"
             >
               Login
@@ -67,6 +68,7 @@ export default {
       minPassword: (v) => v.length >= 8 || 'The password should be at least 8 characters',
       email: (v) => !v || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid',
     },
+    loading: false,
   }),
   methods: {
     login() {
@@ -75,6 +77,7 @@ export default {
         email: this.email,
         password: this.password,
       };
+      this.loading = true;
       this.$store.dispatch('login', data)
         .then(() => {
           this.$store.dispatch('notify', { text: 'Successfull Login. Welcome back!' });
@@ -84,6 +87,7 @@ export default {
           const text = err.response.status === 400 ? 'Incorrect email/password combination. Please try again.' : err;
           this.$store.dispatch('notify', { text, color: 'error' });
         });
+      this.loading = false;
     },
   },
 };
