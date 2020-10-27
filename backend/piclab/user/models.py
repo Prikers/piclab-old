@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator, MinLengthValidator
 from django.db import models
 
 ERROR_REGEX_USERNAME = 'Enter a valid username. This value may contain only letters, numbers and @/./+/-/_ characters.'
-ERROR_LENGTH_USERNAME = 'Enter a valid username. This value should be between 3 and 20 characters long.'
+ERROR_LENGTH_USERNAME = 'Enter a valid username. This value should be between 3 and 25 characters long.'
 
 
 class UserManager(BaseUserManager):
@@ -33,10 +33,10 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
 
     class Meta:
-         verbose_name = "user"
+         verbose_name = 'user'
 
     email = models.EmailField(unique=True, max_length=100, verbose_name='email')
-    username = models.CharField(unique=True, max_length=30, validators=[
+    username = models.CharField(unique=True, max_length=25, validators=[
         RegexValidator(regex='^[\w.@+\-]+$', message=ERROR_REGEX_USERNAME),
         MinLengthValidator(3, message=ERROR_LENGTH_USERNAME),
         ])
