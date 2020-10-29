@@ -3,10 +3,12 @@ from pathlib import Path
 import shutil
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db.utils import IntegrityError
 from django.test import TestCase
 
-from piclab.api.models import Photo
+from piclab.api.models import Photo, Project
 
 User = get_user_model()
 
@@ -79,3 +81,60 @@ class TestPhotoModel(TestCase):
             photo.image.name,
             f'photos/{self.user.email}/{self.project.id}.{self.project.name}/originals/{new_image.name}'
         )
+
+
+class TestProjectModel(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(
+            email='test@user.com', username='test', password='poiumlkj')
+        # Note: a default project is already created for self.user
+        # Let's add another one (so 2 projects are created in total)
+        self.project = Project.objects.create(name='test', owner=self.user)
+    
+    def test_project_str(self):
+        self.assertEquals(str(self.project), self.project.name)
+
+    def test_project_default_values(self):
+        self.assertEquals(self.project.date_created.date(), date.today())
+
+    def test_project_name_validators(self):
+        # Correct values
+        project = Project.objects.create(owner=self.user, name='test@-_')
+        project.full_clean()
+        self.assertEquals(Project.objects.count(), 3)
+        # Tool long
+        name = 'tes' * 10 + 't'  # 31 characters
+        with self.assertRaises(ValidationError):
+            project = Project.objects.create(owner=self.user, name=name)
+            project.clean_fields()
+        # Invalid chararcters
+        name = 'test/'
+        with self.assertRaises(ValidationError):
+            project = Project.objects.create(owner=self.user, name=name)
+            project.clean_fields()
+
+    def test_project_access_project_from_user(self):
+        new = Project.objects.create(owner=self.user, name='new_test')
+        self.assertEquals(self.user.projects.first(), new)
+
+    def test_project_delete_user_cascades(self):
+        self.assertEquals(Project.objects.count(), 2)
+        self.user.delete()
+        self.assertEquals(Project.objects.count(), 0)
+
+    def test_project_query_ordering(self):
+        latest_project = Project.objects.create(owner=self.user, name='new_test')
+        projects = Project.objects.all()
+        self.assertEquals(projects[0], latest_project)
+
+    def test_project_unicity_constraints(self):
+        project = Project.objects.first()
+        new_user = User.objects.create(
+            email='test2@user.com', username='test2', password='poiumlkj')
+        # Ok for different users to have the same project name
+        Project.objects.create(owner=new_user, name=project.name)
+        self.assertEquals(Project.objects.filter(owner=new_user).count(), 2)
+        # Not ok for a given user to have the same project name
+        with self.assertRaises(IntegrityError):
+            Project.objects.create(owner=new_user, name=project.name)

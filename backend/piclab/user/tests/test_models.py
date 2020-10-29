@@ -2,7 +2,7 @@ from datetime import date
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.db.utils import DataError, IntegrityError
+from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from piclab.user.models import Profile
