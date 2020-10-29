@@ -66,10 +66,10 @@ class TestUserModel(TestCase):
                 email='test1@user.com', username='te', password='poiumlkj'
                 ).clean_fields()
         # Too long
-        with self.assertRaises(DataError):
+        with self.assertRaises(ValidationError):
             User.objects.create_user(
                 email='test2@user.com', username='test'*10, password='poiumlkj'
-                ).full_clean()
+                ).clean_fields()
 
     def test_user_username_characters_validators(self):
         # Invalid special characters
@@ -91,7 +91,7 @@ class TestUserModel(TestCase):
                 email='notanemail', username='test1', password='poiumlkj'
                 ).clean_fields()
         # Too long
-        with self.assertRaises(DataError):
+        with self.assertRaises(ValidationError):
             User.objects.create_user(
                 email='test'*25+'@user.com', username='test2', password='poiumlkj'
                 ).clean_fields()

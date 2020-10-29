@@ -5,6 +5,10 @@ import sys
 
 
 def main():
+    # Use settings.test when running ci-cd ("python manage.py test")
+    if 'test' in sys.argv:
+        os.environ['DJANGO_SETTINGS_MODULE'] = 'piclab.settings.test'
+    # By default use production settings
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'piclab.settings.prod')
     try:
         from django.core.management import execute_from_command_line
