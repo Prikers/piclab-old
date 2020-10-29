@@ -1,7 +1,9 @@
 from piclab.google_cloud import get_secret
 from piclab.settings.base import *
 
-GS_BUCKET_NAME = 'piclab-tests'
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+MEDIA_ROOT = './tmp-tests'
+
 DEBUG = False
 
 SECRET_KEY = os.environ.get('SECRET_KEY', None)
