@@ -1,14 +1,12 @@
 from datetime import date
-from pathlib import Path
-import shutil
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from piclab.api.models import Photo, Project
+from piclab.api.tests.utils import remove_test_images, get_image_file
 
 User = get_user_model()
 
@@ -19,22 +17,13 @@ class TestPhotoModel(TestCase):
         self.user = User.objects.create(
             email='test@user.com', username='test', password='poiumlkj')
         self.project = self.user.profile.current_project
-        self.image = SimpleUploadedFile(name='test.jpg',
-            content=b'\x00\x00\x00\x00\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01')
+        self.image = get_image_file(name='test.jpg')
         self.photo = Photo.objects.create(owner=self.user, project=self.project, image=self.image)
 
     @classmethod
     def tearDownClass(cls):
-        # Make sure to delete the tmp files after running tests
-        from django.conf import settings
-        tmp_folder = settings.MEDIA_ROOT
-        # Ensure the deleted folder is the expected one
-        assert tmp_folder == './tmp-tests'
-        # Ensure the tmp folder only contains tmp test images
-        tmp_files = [(f.stem, f.suffix) for f in Path(tmp_folder).rglob('*') if f.is_file()]
-        assert all([stem.startswith('test') and suffix == '.jpg' for (stem, suffix) in tmp_files])
-        # Clean up all files
-        shutil.rmtree(tmp_folder, ignore_errors=True)
+        # # Make sure to delete the tmp files after running tests
+        remove_test_images()
         # Important: do not forget to call django methods
         super().tearDownClass()
 
@@ -74,8 +63,7 @@ class TestPhotoModel(TestCase):
         self.assertEquals(photos[0], latest_photo)
 
     def test_photo_upload_path(self):
-        new_image = SimpleUploadedFile(name='test_new.jpg',
-            content=b'\x00\x00\x00\x00\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01')
+        new_image = get_image_file(name='test_new.jpg', ext='jpeg')
         photo = Photo.objects.create(owner=self.user, project=self.project, image=new_image)
         self.assertEquals(
             photo.image.name,
