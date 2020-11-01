@@ -72,7 +72,7 @@ class TestPhotoSerializer(TestCase):
         )
 
     def test_photo_name_is_added(self):
-        name = 'test.png'
+        name = 'test.jpg'
         image = get_image_file(name=name)
         data = {
             'project': self.project.id,
@@ -82,3 +82,16 @@ class TestPhotoSerializer(TestCase):
         serializer.is_valid()
         serializer.save(owner=self.user)
         self.assertEquals(serializer.data['name'], name)
+
+    def test_photo_name_too_long(self):
+        name = 'test' * 10 + '.jpg'
+        shortened = ('test' * 10)[:37] + '_' + '.jpg'
+        image = get_image_file(name=name)
+        data = {
+            'project': self.project.id,
+            'image': image
+        }
+        serializer = PhotoSerializer(data=data)
+        serializer.is_valid()
+        serializer.save(owner=self.user)
+        self.assertEquals(serializer.data['name'], shortened)

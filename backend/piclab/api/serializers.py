@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from django.utils.timezone import now
 from rest_framework import serializers
 
@@ -16,8 +18,9 @@ class PhotoSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        name = str(validated_data.get('image'))
-        name = name if len(name) < 40 else (name[:37] + '...')
+        name = Path(str(validated_data.get('image')))
+        stem, suffix = name.stem, name.suffix
+        name = name if len(stem) < 40 else (f'{stem[:37]}_{suffix}')
         photo = Photo.objects.create(name=name, **validated_data)
         return photo
 
