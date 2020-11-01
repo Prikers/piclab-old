@@ -55,7 +55,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             project = validated_data.get('current_project')
             if project.owner.id != user.id:
                 raise serializers.ValidationError(
-                    detail=f'You do not have permission to acess this project ({project.name}).'
+                    detail=f'You do not have permission to access this project ({project.name}).'
                     'Please contact project\'s administrator to request access.')
 
             for attr, value in validated_data.items():
