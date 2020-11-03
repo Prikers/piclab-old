@@ -5,6 +5,7 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 MEDIA_ROOT = './tmp-tests'
 
 DEBUG = False
+ALLOWED_HOSTS = ['testserver']
 
 SECRET_KEY = os.environ.get('SECRET_KEY', None)
 if SECRET_KEY is None:

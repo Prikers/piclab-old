@@ -10,7 +10,7 @@ from piclab.user.serializers import RegisterSerializer, ProfileSerializer
 User = get_user_model()
 
 
-class TestProjectSerializer(TestCase):
+class TestRegisterSerializer(TestCase):
 
     def setUp(self):
         self.data = {
