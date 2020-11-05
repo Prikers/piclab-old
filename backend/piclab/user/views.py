@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, viewsets
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
 from rest_framework.generics import CreateAPIView
 
 from .serializers import RegisterSerializer, ProfileSerializer
@@ -24,3 +24,13 @@ class ProfileViewSet(viewsets.ModelViewSet):
         if user.is_authenticated:
             return Profile.objects.filter(user=user)
         raise PermissionDenied()
+
+    def destroy(self, request, pk=None):
+        raise MethodNotAllowed(
+            'Profile deletion should only be performed through admin interface by admin user'
+        )
+
+    def create(self, request):
+        raise MethodNotAllowed(
+            'Profile creation should only be performed through user creation at /api/register/'
+        )
