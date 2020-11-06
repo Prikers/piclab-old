@@ -28,8 +28,7 @@ jobs:
     - name: Run test suite
       working-directory: ./backend
       run: |
-        pipenv shell
-        python manage.py test
+        pipenv run python manage.py test
 
     # Frontend
     - name: Setup Node.js
