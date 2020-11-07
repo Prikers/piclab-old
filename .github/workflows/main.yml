@@ -28,7 +28,7 @@ jobs:
     - name: Set environment variables
       working-directory: ./backend
       run: |
-        echo "SECRET_KEY=$(python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')" >> $GITHUB_ENV
+        echo "SECRET_KEY=$(pipenv run python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')" >> $GITHUB_ENV
     - name: Run test suite
       working-directory: ./backend
       run: |
