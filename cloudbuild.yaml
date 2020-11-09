@@ -14,15 +14,19 @@ steps:
 # Deploy backend
 - name: 'python:3.7'
   entrypoint: python3
-  args: ['pip3', 'install', 'pipenv', '--user']
+  args: ['-m', 'pip', 'install', 'pipenv', '--user']
 - name: 'python:3.7'
-  entrypoint: python3
+  entrypoint: pipenv
   dir: ./backend
-  args: ['pipenv', 'install', '--user']
+  args: ['install', '--user']
 - name: 'python:3.7'
-  entrypoint: python3
+  entrypoint: pipenv
   dir: ./backend
-  args: ['pipenv', 'run', 'python', 'manage.py', 'collectstatic', '--noinput']
+  args: ['lock', '-r', '>', 'requirements.txt']
+- name: 'python:3.7'
+  entrypoint: pipenv
+  dir: ./backend
+  args: ['run', 'python', 'manage.py', 'collectstatic', '--noinput']
 - name: 'gcr.io/cloud-builders/gcloud'
   dir: ./backend
   args: ['app', 'deploy', 'backend.yaml']
