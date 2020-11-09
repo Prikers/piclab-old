@@ -1,0 +1,40 @@
+steps:
+# Buil and deploy frontend
+- name: 'node:13.7.0'
+  dir: ./frontend
+  entrypoint: npm
+  args: ['install']
+- name: 'node:13.7.0'
+  dir: ./frontend
+  entrypoint: npm
+  args: ['run', 'build']
+- name: 'gcr.io/cloud-builders/gcloud'
+  dir: ./frontend
+  args: ['app', 'deploy', 'frontend.yaml']
+# Deploy backend
+- name: 'python:3.7'
+  entrypoint: python3
+  args: ['pip3', 'install', 'pipenv', '--user']
+- name: 'python:3.7'
+  entrypoint: python3
+  dir: ./backend
+  args: ['pipenv', 'install', '--user']
+- name: 'python:3.7'
+  entrypoint: python3
+  dir: ./backend
+  args: ['pipenv', 'run', 'python', 'manage.py', 'collectstatic', '--noinput']
+- name: 'gcr.io/cloud-builders/gcloud'
+  dir: ./backend
+  args: ['app', 'deploy', 'backend.yaml']
+# Deploy dispatcher
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['app', 'deploy', 'dispatch.yaml']
+# Deploy cloud function
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['functions', 'deploy', 'deduplicator',
+         '--entry-point main', '--runtime python37',
+         '--trigger-resource circular-fusion-290809.appspot.com',
+         '--trigger-event google.storage.object.finalize',
+         '--source backend/functions/deduplicator',
+         '—region europe-west1']
+timeout: '1600s'
