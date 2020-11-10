@@ -13,25 +13,38 @@ steps:
   args: ['app', 'deploy', 'frontend.yaml']
 # Deploy backend
 - name: 'python:3.7'
-  entrypoint: python3
+  entrypoint: bash
   dir: ./backend
-  args: ['-m', 'pip', 'install', '-r', 'requirements.txt', '--user']
-- name: 'python:3.7'
-  entrypoint: python3
-  dir: ./backend
-  args: ['manage.py', 'collectstatic', '--noinput']
+  env:
+  - 'GOOGLE_CLOUD_PROJECT=$PROJECT_ID'
+  args:
+  - -c
+  - |
+    pip install pipenv &&
+    pipenv lock -r > requirements.txt &&
+    pipenv install &&
+    pipenv run python manage.py collectstatic --noinput
 - name: 'gcr.io/cloud-builders/gcloud'
   dir: ./backend
   args: ['app', 'deploy', 'backend.yaml']
 # Deploy dispatcher
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['app', 'deploy', 'dispatch.yaml']
-# Deploy cloud function
+# Deploy cloud function (first retrieve the cloud function password)
+- name: gcr.io/cloud-builders/gcloud
+  entrypoint: 'bash'
+  args: [ '-c', "gcloud secrets versions access latest --secret=CLOUD_FUNCTION_PASSWORD --format='get(payload.data)' | tr '_-' '/+' | base64 -d > password.txt" ]
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['functions', 'deploy', 'deduplicator',
-         '--entry-point main', '--runtime python37',
-         '--trigger-resource circular-fusion-290809.appspot.com',
-         '--trigger-event google.storage.object.finalize',
-         '--source backend/functions/deduplicator',
-         '—region europe-west1']
+  entrypoint: 'bash'
+  args: 
+  - -c
+  - |
+    gcloud functions deploy processing \
+    --region europe-west1 \
+    --entry-point main \
+    --runtime python37 \
+    --trigger-resource circular-fusion-290809.appspot.com \
+    --trigger-event google.storage.object.finalize \
+    --source backend/functions/processing \
+    --set-env-vars CLOUD_FUNCTION_EMAIL=circular-fusion-290809@appspot.gserviceaccount.com,GOOGLE_CLOUD_HOST_URL=circular-fusion-290809.ew.r.appspot.com,CLOUD_FUNCTION_PASSWORD=$(cat password.txt)
 timeout: '1600s'
