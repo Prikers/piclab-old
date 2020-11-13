@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAdminUser
 
-from .models import Photo, Project
-from .serializers import PhotoSerializer, ProjectSerializer
+from .models import Hash, Photo, Project
+from .serializers import HashSerializer, PhotoSerializer, ProjectSerializer
 
 
 class IsOwner(permissions.BasePermission):
@@ -53,6 +53,25 @@ class PhotoViewSet(viewsets.ModelViewSet):
         else:
             owner = user
         return Photo.objects.filter(owner=owner, project=project)
+
+
+class HashViewSet(viewsets.ModelViewSet):
+    serializer_class = HashSerializer
+    permission_classes = [IsOwner|IsAdminUser]
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied()
+        # Get specified project and defaults to user current_project
+        project = self.request.query_params.get('project',
+            user.profile.current_project.id)
+        # Allow admin user to modify any user data (userful for Cloud Functions)
+        if user.is_admin:
+            owner = Project.objects.get(pk=project).owner
+        else:
+            owner = user
+        return Hash.objects.filter(photo__owner=owner, photo__project=project)
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
