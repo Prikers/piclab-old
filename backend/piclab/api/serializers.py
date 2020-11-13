@@ -14,7 +14,7 @@ class PhotoSerializer(serializers.ModelSerializer):
         model = Photo
         fields = [
             'id', 'image', 'name', 'date_created',
-            'is_liked', 'project', 'hash',
+            'is_liked', 'project',
         ]
 
     def create(self, validated_data):

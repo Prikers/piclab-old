@@ -36,6 +36,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 self.perform_create(serializer)
                 response.append(serializer.data)
+            else:
+                Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=response, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
