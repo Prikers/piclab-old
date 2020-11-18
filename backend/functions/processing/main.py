@@ -5,7 +5,7 @@ import tempfile
 from google.cloud import storage
 from PIL import Image
 
-from utils.api import obtain_token_headers, post_hash
+from utils.api import API
 from utils.deduplicator import generate_hash
 from utils.thumbnails import generate_thumbnail
 
@@ -32,8 +32,8 @@ def main(event, context):
     hash_ = generate_hash(image)
 
     # Save results
-    headers = obtain_token_headers()
-    post_hash(project, file, headers, data={'hash': hash_})
+    api = API(project, file)
+    api.post_hash_data(hash_)
 
     # Delete the temporary file.
     os.remove(tmp_file)
