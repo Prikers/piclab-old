@@ -21,7 +21,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwner|IsAdminUser]
     parser_classes = (MultiPartParser, FormParser, JSONParser,)
     filter_backends = [SearchFilter]
-    search_fields = ['=name']
+    search_fields = ['=image']
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -57,7 +57,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 class HashViewSet(viewsets.ModelViewSet):
     serializer_class = HashSerializer
-    permission_classes = [IsOwner|IsAdminUser]
+    permission_classes = (IsAdminUser,)
+    filter_backends = [SearchFilter]
+    search_fields = ['=hash']
 
     def get_queryset(self):
         user = self.request.user
