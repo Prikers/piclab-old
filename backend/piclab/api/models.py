@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -62,9 +63,9 @@ class Hash(models.Model):
     photo = models.OneToOneField(Photo, on_delete=models.CASCADE)
     hash = models.CharField(max_length=256, null=True, blank=True)
     is_duplicated = models.BooleanField(default=False)
-    duplicate_id = models.IntegerField(null=True, default=None)
+    duplicate_id = models.CharField(max_length=128, null=True, default=None)
     status = models.SmallIntegerField(choices=STATUS, default=NO_DUPLICATE)
-    date_status = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    date_status = models.DateTimeField(null=True, blank=True, default=timezone.now)
 
     def __str__(self):
         return f'< Hash of Photo {self.photo.name}: {self.hash}'

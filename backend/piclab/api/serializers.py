@@ -10,12 +10,13 @@ from .models import Hash, Photo, Project
 class PhotoSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(required=False)
+    hash_id = serializers.IntegerField(source='hash.id', read_only=True)
 
     class Meta:
         model = Photo
         fields = [
             'id', 'image', 'name', 'date_created',
-            'is_liked', 'project',
+            'is_liked', 'project', 'hash_id',
         ]
 
     def create(self, validated_data):

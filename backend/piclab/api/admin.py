@@ -59,12 +59,15 @@ class PhotoAdmin(admin.ModelAdmin):
 
 @admin.register(Hash)
 class HashAdmin(admin.ModelAdmin):
-    list_display = ('photo_link', 'hash', 'is_duplicated', 'duplicate_id', 'status', 'date_status')
+    list_display = ('id', 'hash_short', 'photo_link', 'is_duplicated', 'duplicate_id', 'status', 'date_status')
     search_fields = ('photo',)
     readonly_fields = ('photo', 'hash')
 
     def photo_link(self, obj):
         url = reverse('admin:api_photo_changelist') + '?' + urlencode({'id': f'{obj.photo.id}'})
         return format_html(f'<a href="{url}">{obj.photo.name}</a>')
+    
+    def hash_short(self, obj):
+        return obj.hash[:20] + '...'
 
     photo_link.short_description = 'photo'
