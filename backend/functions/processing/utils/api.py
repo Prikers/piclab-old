@@ -38,7 +38,7 @@ class API:
         print(f'Hash creation for {self.file}: ID {creation.json()["id"]}')
 
         # Check for potential duplicates by searching hash value in database
-        url = f'{self.base_url}/hash/?project={self.project}&search={hash_value}'
+        url = f'{self.base_url}/hash/?project={self.project}&hash={hash_value}'
         duplicates = requests.get(url=url, headers=self.headers).json()
         if len(duplicates) > 1:  # There are duplicates
             # Retrieve existing duplicate id if there is none - otherwise create it

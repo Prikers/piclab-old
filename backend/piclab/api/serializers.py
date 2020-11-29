@@ -36,6 +36,17 @@ class HashSerializer(serializers.ModelSerializer):
             'duplicate_id', 'status', 'date_status',
         ]
 
+class DetailedHashSerializer(serializers.ModelSerializer):
+
+    photo = PhotoSerializer(read_only=True)
+
+    class Meta:
+        model = Hash
+        fields = [
+            'id', 'photo', 'hash', 'is_duplicated',
+            'duplicate_id', 'status', 'date_status',
+        ]
+
 
 class ProjectSerializer(serializers.ModelSerializer):
 

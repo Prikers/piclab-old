@@ -7,7 +7,10 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAdminUser
 
 from .models import Hash, Photo, Project
-from .serializers import HashSerializer, PhotoSerializer, ProjectSerializer
+from .serializers import (
+    DetailedHashSerializer, HashSerializer,
+    PhotoSerializer, ProjectSerializer
+)
 
 
 class IsOwner(permissions.BasePermission):
@@ -56,10 +59,15 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 
 class HashViewSet(viewsets.ModelViewSet):
-    serializer_class = HashSerializer
     permission_classes = (IsAdminUser,)
-    filter_backends = [SearchFilter]
-    search_fields = ['=hash']
+    filterset_fields = ['hash', 'is_duplicated']
+
+    def get_serializer_class(self):
+        if hasattr(self, 'action') and self.action == 'list':
+            return DetailedHashSerializer
+        if hasattr(self, 'action') and self.action == 'retrieve':
+            return DetailedHashSerializer
+        return HashSerializer
 
     def get_queryset(self):
         user = self.request.user
