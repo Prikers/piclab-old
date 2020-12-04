@@ -42,6 +42,15 @@ const actions = {
     );
     commit('addPhotos', response.data);
   },
+
+  async deletePhoto({ commit, rootState }, photoID) {
+    const { currentProject } = rootState.profiles;
+    await axios.delete(
+      `${API_URL}/photos/${photoID}/`,
+      { params: { project: currentProject.id } },
+    );
+    commit('deletePhoto', photoID);
+  },
 };
 
 const mutations = {
@@ -54,6 +63,9 @@ const mutations = {
   },
   addPhotos: (state, newPhotos) => {
     state.photos = state.photos.concat(newPhotos);
+  },
+  deletePhoto: (state, photoID) => {
+    state.photos = state.photos.filter((photo) => photo.id !== photoID);
   },
 };
 

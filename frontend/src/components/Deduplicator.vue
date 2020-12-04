@@ -53,6 +53,7 @@
               class="mr-3"
               min-width=150
               color="secondary"
+              @click="reviewAndGoToNextDuplicate(skipped=true)"
             >
               Review Later
             </v-btn>
@@ -61,6 +62,7 @@
               class="ml-3"
               min-width=150
               :color="switches.some(x => x) ? 'error' : 'primary'"
+              @click="reviewAndGoToNextDuplicate(skipped=false)"
             >
               Save
             </v-btn>
@@ -88,15 +90,30 @@ export default {
   }),
   methods: {
     ...mapActions(['fetchDuplicates']),
-    nextDuplicate() {
-      // Mark current Dup ID as done
-
+    reviewAndGoToNextDuplicate(skipped) {
+      // Handle delete requests and mark other photos as reviewed
+      this.allDuplicates[this.currentID].forEach((hash, index) => {
+        if (skipped) {
+          this.$store.dispatch('markPhotoAsReviewed', { hash, review: 'skipped' });
+        } else if (this.switches[index] === true) {
+          this.$store.dispatch('deletePhoto', hash.photo.id)
+            .then(() => {
+              this.$store.dispatch('notify', { text: '1 photo deleted!', color: 'warning' });
+            });
+        } else {
+          this.$store.dispatch('markPhotoAsReviewed', { hash, review: 'done' });
+        }
+      });
       // Move to the next one
       const next = this.allIDs.indexOf(this.currentID) + 1;
-      this.currentID = this.allIDs[next];
-      this.switches = [];
-      for (let i = 0; i < this.allDuplicates[this.currentID].length; i += 1) {
-        this.switches[i] = false;
+      if (next >= this.allIDs.length) { // Deduplication is over
+        this.dialogDeduplicator = false;
+      } else {
+        this.currentID = this.allIDs[next];
+        this.switches = [];
+        for (let i = 0; i < this.allDuplicates[this.currentID].length; i += 1) {
+          this.switches[i] = false;
+        }
       }
     },
   },
@@ -105,7 +122,6 @@ export default {
   },
   async created() {
     await this.fetchDuplicates();
-    console.log(this.allDuplicates);
     this.allIDs = Object.keys(this.allDuplicates);
     [this.currentID] = this.allIDs;
     for (let i = 0; i < this.allDuplicates[this.currentID].length; i += 1) {

@@ -31,11 +31,28 @@ const actions = {
     });
     commit('setDuplicates', duplicates);
   },
+
+  async markPhotoAsReviewed({ commit, rootState }, { hash, review }) {
+    const { currentProject } = rootState.profiles;
+    const reviews = { done: 2, skipped: 3 };
+    const datetime = new Date();
+    await axios.patch(
+      `${API_URL}/hash/${hash.id}/`,
+      { status: reviews[review], date_status: datetime.toISOString() },
+      { params: { project: currentProject.id } },
+    );
+    commit('markPhotoAsReviewed', hash, reviews[review], datetime);
+  },
 };
 
 const mutations = {
   setDuplicates: (state, duplicates) => {
     state.duplicates = duplicates;
+  },
+  markPhotoAsReviewed: (state, hash, status, datetime) => {
+    const index = state.duplicates[hash.duplicate_id].findIndex((h) => h.id === hash.id);
+    state.duplicates[hash.duplicate_id][index].status = status;
+    state.duplicates[hash.duplicate_id][index].date_status = datetime;
   },
 };
 
