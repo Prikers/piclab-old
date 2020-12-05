@@ -14,15 +14,19 @@ const getters = {
 const actions = {
   async fetchDuplicates({ commit, rootState }) {
     const { currentProject } = rootState.profiles;
-    const response = await axios.get(`${API_URL}/hash/`, {
-      params: {
-        project: currentProject.id,
-        is_duplicated: true,
-      },
-    });
+    const params = new URLSearchParams(); // Required because of duplicated 'status' param
+    params.append('project', currentProject.id);
+    params.append('is_duplicated', true);
+    params.append('status', 1);
+    params.append('status', 3);
+    const response = await axios.get(`${API_URL}/hash/`, { params });
+    // Order duplicates with 'todo' first
+    const data = response.data
+      .filter((dup) => dup.status === 'todo')
+      .concat(response.data.filter((dup) => dup.status !== 'todo'));
     // Duplicates are all contained in a single array - Let's unflatten it!
     const duplicates = {};
-    response.data.forEach((dup) => {
+    data.forEach((dup) => {
       if (!(dup.duplicate_id in duplicates)) {
         duplicates[dup.duplicate_id] = [dup];
       } else {

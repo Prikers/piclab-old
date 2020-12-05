@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django_filters import BooleanFilter, CharFilter, FilterSet, MultipleChoiceFilter
 from rest_framework import permissions, viewsets, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import SearchFilter
@@ -17,6 +18,15 @@ class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.owner == request.user
+
+
+class FilterHashView(FilterSet):
+    status = MultipleChoiceFilter(field_name='status', choices=Hash.STATUS)
+    hash = CharFilter(field_name='hash')
+    is_duplicated = BooleanFilter(field_name='is_duplicated')
+    class Meta:
+        model = Hash
+        fields = ['status', 'hash', 'is_duplicated']
 
 
 class PhotoViewSet(viewsets.ModelViewSet):
@@ -60,7 +70,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 class HashViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminUser,)
-    filterset_fields = ['hash', 'is_duplicated']
+    filterset_class = FilterHashView
 
     def get_serializer_class(self):
         if hasattr(self, 'action') and self.action == 'list':
