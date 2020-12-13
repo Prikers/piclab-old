@@ -71,4 +71,4 @@ class Hash(models.Model):
         return f'< Hash of Photo {self.photo.name}: {self.hash}'
 
     class Meta:
-        ordering = ['status', '-date_status']
+        ordering = ['-status', '-date_status']
