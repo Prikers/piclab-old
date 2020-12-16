@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
 
-from piclab.api.models import Photo, Project
+from piclab.api.models import Hash, Photo, Project
 from piclab.api.tests.utils import remove_test_images, get_image_file
 
 User = get_user_model()
@@ -38,7 +38,6 @@ class TestPhotoModel(TestCase):
 
     def test_photo_default_values(self):
         self.assertFalse(self.photo.is_liked)
-        self.assertIsNone(self.photo.hash)
         self.assertEquals(self.photo.date_created.date(), date.today())
 
     def test_photo_access_photo_from_user(self):
@@ -126,3 +125,55 @@ class TestProjectModel(TestCase):
         # Not ok for a given user to have the same project name
         with self.assertRaises(IntegrityError):
             Project.objects.create(owner=new_user, name=project.name)
+
+
+class TestHashModel(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(
+            email='test@user.com', username='test', password='poiumlkj')
+        self.project = self.user.profile.current_project
+        self.image = get_image_file(name='test.jpg')
+        self.photo = Photo.objects.create(owner=self.user, project=self.project, image=self.image)
+        self.hash = Hash.objects.create(photo=self.photo, hash='11111')
+
+    @classmethod
+    def tearDownClass(cls):
+        remove_test_images()
+        super().tearDownClass()
+
+    def test_hash_str(self):
+        self.assertEquals(
+            str(self.hash),
+            f'< Hash of Photo {self.hash.photo.name}: {self.hash.hash}'
+        )
+
+    def test_hash_default_values(self):
+        self.assertEquals(self.hash.is_duplicated, False)
+        self.assertEquals(self.hash.duplicate_id, None)
+        self.assertEquals(self.hash.status, 0)
+
+    def test_hash_access_hash_from_photo(self):
+        self.assertEquals(self.photo.hash, self.hash)
+
+    def test_hash_delete_photo_cascades(self):
+        self.assertEquals(Hash.objects.count(), 1)
+        self.photo.delete()
+        self.assertEquals(Hash.objects.count(), 0)
+
+    def test_hash_query_ordering(self):
+        self.photo2 = Photo.objects.create(owner=self.user, project=self.project, image=self.image)
+        self.photo3 = Photo.objects.create(owner=self.user, project=self.project, image=self.image)
+        self.hash2 = Hash.objects.create(photo=self.photo2, hash='22222', status=1)
+        self.hash3 = Hash.objects.create(photo=self.photo3, hash='33333')
+        hashes = Hash.objects.all()
+        self.assertListEqual(
+            list(hashes),
+            [self.hash2, self.hash3, self.hash]
+        )
+
+    def test_hash_status_field(self):
+        self.assertListEqual(
+            Hash.STATUS,
+            [(0, 'no_duplicate'), (1, 'todo'), (2, 'done'), (3, 'skipped')]
+        )

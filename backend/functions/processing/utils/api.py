@@ -1,28 +1,61 @@
+from datetime import datetime
 import os
 import requests
+import uuid
 
-def post_photo_data(project, name, payload):
-    # Obtain token
-    host = os.environ.get('GOOGLE_CLOUD_HOST_URL')
-    response = requests.post(f'https://{host}/api/token/', {
-        'email': os.environ.get('CLOUD_FUNCTION_EMAIL'),
-        'password': os.environ.get('CLOUD_FUNCTION_PASSWORD'),
-    })
-    token = response.json()['access']
-    # Retrieve photo in order to get its ID
-    photo = requests.get(
-        url=f'https://{host}/api/photos/?project={project}&search={name}',
-        headers={'Authorization': f'Bearer {token}'},
-    )
-    if not photo:
-        return
-    photo = photo.json()[0]
-    photo_id = photo['id']
-    # Post data payload
-    response = requests.patch(
-        url=f'https://{host}/api/photos/{photo_id}/?project={project}',
-        data=payload,
-        headers={'Authorization': f'Bearer {token}'},
-    )
-    print(f'Post data for {name}: response {response}')
-    return response
+
+class API:
+
+    def __init__(self, project, file):
+        self.project = project
+        self.file = file
+        self.host = os.environ.get('GOOGLE_CLOUD_HOST_URL')
+        self.base_url = f'https://{self.host}/api'
+        self.token = self.obtain_token()
+        self.headers = {'Authorization': f'Bearer {self.token}'}
+        self.photo = self.get_photo()
+
+    def obtain_token(self):
+        response = requests.post(f'{self.base_url}/token/', {
+            'email': os.environ.get('CLOUD_FUNCTION_EMAIL'),
+            'password': os.environ.get('CLOUD_FUNCTION_PASSWORD'),
+        })
+        token = response.json()['access']
+        return token
+
+    def get_photo(self):
+        url = f'{self.base_url}/photos/?project={self.project}&search={self.file}'
+        photo = requests.get(url=url, headers=self.headers).json()
+        if len(photo) == 0:
+            raise ValueError(f'Failed retrieving {self.file.name} at url {url}')
+        return photo[0]
+
+    def post_hash_data(self, hash_value):
+        # Create the Hash entry in database
+        url = f'{self.base_url}/hash/?project={self.project}'
+        data = {'photo': self.photo['id'], 'hash': hash_value}
+        creation = requests.post(url=url, headers=self.headers, data=data)
+        print(f'Hash creation for {self.file}: ID {creation.json()["id"]}')
+
+        # Check for potential duplicates by searching hash value in database
+        url = f'{self.base_url}/hash/?project={self.project}&hash={hash_value}'
+        duplicates = requests.get(url=url, headers=self.headers).json()
+        if len(duplicates) > 1:  # There are duplicates
+            # Retrieve existing duplicate id if there is none - otherwise create it
+            # Duplicate id needs to be created the first time the hash appears as a duplicate
+            duplicate_id = duplicates[0].get('duplicate_id')
+            if duplicate_id is None:
+                duplicate_id = str(uuid.uuid4())
+            # Add duplicate information to the payload
+            payload = {
+                'duplicate_id': duplicate_id,
+                'is_duplicated': True,
+                'status': 1,
+                'date_status': datetime.now().isoformat(),
+            }
+            # Patch all hash ids
+            ids = [d['id'] for d in duplicates]
+            for id_ in [d['id'] for d in duplicates]:
+                url=f'{self.base_url}/hash/{id_}/?project={self.project}'
+                requests.patch(url=url, headers=self.headers, data=payload)
+            print(f'Duplicates identified for {self.file.name} - IDs: {ids}')

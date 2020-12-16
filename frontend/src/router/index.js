@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import store from '../store';
 
 import Dashboard from '../views/Dashboard.vue';
-import Deduplicator from '../views/Deduplicator.vue';
+import Tweaks from '../views/Tweaks.vue';
 import FaceIdentification from '../views/FaceIdentification.vue';
 import Gallery from '../views/Gallery.vue';
 import LandingPage from '../views/LandingPage.vue';
@@ -39,9 +39,9 @@ const routes = [
     component: FaceIdentification,
   },
   {
-    path: '/deduplicator',
-    name: 'deduplicator',
-    component: Deduplicator,
+    path: '/tweaks',
+    name: 'tweaks',
+    component: Tweaks,
   },
   {
     path: '/smart-art',

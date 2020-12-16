@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django_filters import BooleanFilter, CharFilter, FilterSet, MultipleChoiceFilter
 from rest_framework import permissions, viewsets, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import SearchFilter
@@ -6,8 +7,11 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAdminUser
 
-from .models import Photo, Project
-from .serializers import PhotoSerializer, ProjectSerializer
+from .models import Hash, Photo, Project
+from .serializers import (
+    DetailedHashSerializer, HashSerializer,
+    PhotoSerializer, ProjectSerializer
+)
 
 
 class IsOwner(permissions.BasePermission):
@@ -16,12 +20,21 @@ class IsOwner(permissions.BasePermission):
         return obj.owner == request.user
 
 
+class FilterHashView(FilterSet):
+    status = MultipleChoiceFilter(field_name='status', choices=Hash.STATUS)
+    hash = CharFilter(field_name='hash')
+    is_duplicated = BooleanFilter(field_name='is_duplicated')
+    class Meta:
+        model = Hash
+        fields = ['status', 'hash', 'is_duplicated']
+
+
 class PhotoViewSet(viewsets.ModelViewSet):
     serializer_class = PhotoSerializer
     permission_classes = [IsOwner|IsAdminUser]
     parser_classes = (MultiPartParser, FormParser, JSONParser,)
     filter_backends = [SearchFilter]
-    search_fields = ['=name']
+    search_fields = ['=image']
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -36,6 +49,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 self.perform_create(serializer)
                 response.append(serializer.data)
+            else:
+                Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data=response, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
@@ -51,6 +66,32 @@ class PhotoViewSet(viewsets.ModelViewSet):
         else:
             owner = user
         return Photo.objects.filter(owner=owner, project=project)
+
+
+class HashViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminUser,)
+    filterset_class = FilterHashView
+
+    def get_serializer_class(self):
+        if hasattr(self, 'action') and self.action == 'list':
+            return DetailedHashSerializer
+        if hasattr(self, 'action') and self.action == 'retrieve':
+            return DetailedHashSerializer
+        return HashSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied()
+        # Get specified project and defaults to user current_project
+        project = self.request.query_params.get('project',
+            user.profile.current_project.id)
+        # Allow admin user to modify any user data (userful for Cloud Functions)
+        if user.is_admin:
+            owner = Project.objects.get(pk=project).owner
+        else:
+            owner = user
+        return Hash.objects.filter(photo__owner=owner, photo__project=project)
 
 
 class ProjectViewSet(viewsets.ModelViewSet):

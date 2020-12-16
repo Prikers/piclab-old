@@ -5,12 +5,11 @@ import tempfile
 from google.cloud import storage
 from PIL import Image
 
-from utils.api import post_photo_data
+from utils.api import API
 from utils.deduplicator import generate_hash
 from utils.thumbnails import generate_thumbnail
 
 def main(event, context):
-    '''https://cloud.google.com/storage/docs/json_api/v1/objects#resource'''
     # Prevent processing when saving other images (thumbnails, etc.) to the bucket
     file = Path(event['name'])
     if file.parent.name != 'originals':
@@ -33,7 +32,8 @@ def main(event, context):
     hash_ = generate_hash(image)
 
     # Save results
-    post_photo_data(project=project, name=file.name, payload={'hash': hash_})
+    api = API(project, file)
+    api.post_hash_data(hash_)
 
     # Delete the temporary file.
     os.remove(tmp_file)

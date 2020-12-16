@@ -1,20 +1,22 @@
 from pathlib import Path
+from django.db.models import fields
 
 from django.utils.timezone import now
 from rest_framework import serializers
 
-from .models import Photo, Project
+from .models import Hash, Photo, Project
 
 
 class PhotoSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(required=False)
+    hash_id = serializers.IntegerField(source='hash.id', read_only=True)
 
     class Meta:
         model = Photo
         fields = [
             'id', 'image', 'name', 'date_created',
-            'is_liked', 'project', 'hash',
+            'is_liked', 'project', 'hash_id',
         ]
 
     def create(self, validated_data):
@@ -23,6 +25,27 @@ class PhotoSerializer(serializers.ModelSerializer):
         name = name if len(stem) < 40 else (f'{stem[:37]}_{suffix}')
         photo = Photo.objects.create(name=name, **validated_data)
         return photo
+
+
+class HashSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Hash
+        fields = [
+            'id', 'photo', 'hash', 'is_duplicated',
+            'duplicate_id', 'status', 'date_status',
+        ]
+
+class DetailedHashSerializer(serializers.ModelSerializer):
+
+    photo = PhotoSerializer(read_only=True)
+
+    class Meta:
+        model = Hash
+        fields = [
+            'id', 'photo', 'hash', 'is_duplicated',
+            'duplicate_id', 'status', 'date_status',
+        ]
 
 
 class ProjectSerializer(serializers.ModelSerializer):

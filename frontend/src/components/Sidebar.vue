@@ -26,11 +26,11 @@
           </v-list-item-action>
           <v-list-item-content>Face Recognition</v-list-item-content>
         </v-list-item>
-        <v-list-item link to="/deduplicator">
+        <v-list-item link to="/tweaks">
           <v-list-item-action>
             <v-icon>mdi-book-remove-multiple</v-icon>
           </v-list-item-action>
-          <v-list-item-content>Deduplication</v-list-item-content>
+          <v-list-item-content>Tweaks</v-list-item-content>
         </v-list-item>
         <v-list-item link to="/smart-art">
           <v-list-item-action>

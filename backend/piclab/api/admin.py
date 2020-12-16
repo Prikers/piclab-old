@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.http import urlencode
 
-from .models import Photo, Project
+from .models import Photo, Project, Hash
 
 
 @admin.register(Project)
@@ -28,7 +28,7 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'owner_link', 'project_link',
-                    'date_created', 'like', 'photo_link')
+                    'date_created', 'like', 'photo_link', 'hash_link')
     search_fields = ('name',)
     readonly_fields = ('owner', 'date_created', 'project')
 
@@ -40,6 +40,10 @@ class PhotoAdmin(admin.ModelAdmin):
         url = reverse('admin:api_project_changelist') + '?' + urlencode({'id': f'{obj.project.id}'})
         return format_html(f'<a href="{url}">{obj.project.name}</a>')
 
+    def hash_link(self, obj):
+        url = reverse('admin:api_hash_changelist') + '?' + urlencode({'id': f'{obj.hash.id}'})
+        return format_html(f'<a href="{url}">hash</a>')
+
     def photo_link(self, obj):
         return format_html(f'<a href="{obj.image.url}">link</a>')
     
@@ -49,4 +53,21 @@ class PhotoAdmin(admin.ModelAdmin):
     owner_link.short_description = 'owner'
     project_link.short_description = 'project'
     photo_link.short_description = 'link'
+    hash_link.short_description = 'hash'
     like.short_description = 'like'
+
+
+@admin.register(Hash)
+class HashAdmin(admin.ModelAdmin):
+    list_display = ('id', 'hash_short', 'photo_link', 'is_duplicated', 'duplicate_id', 'status', 'date_status')
+    search_fields = ('photo',)
+    readonly_fields = ('photo', 'hash')
+
+    def photo_link(self, obj):
+        url = reverse('admin:api_photo_changelist') + '?' + urlencode({'id': f'{obj.photo.id}'})
+        return format_html(f'<a href="{url}">{obj.photo.name}</a>')
+    
+    def hash_short(self, obj):
+        return obj.hash[:20] + '...'
+
+    photo_link.short_description = 'photo'

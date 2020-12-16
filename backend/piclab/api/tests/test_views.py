@@ -2,11 +2,12 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient, force_authenticate
+from rest_framework.permissions import IsAdminUser
+from rest_framework.test import APIClient
 
-from piclab.api.models import Photo, Project
-from piclab.api.views import PhotoViewSet, ProjectViewSet, IsOwner
-from piclab.api.serializers import PhotoSerializer, ProjectSerializer
+from piclab.api.models import Hash, Photo, Project
+from piclab.api.views import FilterHashView, HashViewSet, PhotoViewSet, ProjectViewSet, IsOwner
+from piclab.api.serializers import DetailedHashSerializer, HashSerializer, PhotoSerializer, ProjectSerializer
 from piclab.api.tests.utils import get_image_file, remove_test_images
 
 User = get_user_model()
@@ -115,6 +116,7 @@ class TestPhotoViews(TestCase):
         self.assertEquals(response.status_code, status.HTTP_201_CREATED)
 
     def test_photo_delete(self):
+        # Note: project will default to user current project
         url = reverse('Photo-detail', args=[self.photo.id])
         response = self.client.delete(url)
         self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -133,3 +135,89 @@ class TestPhotoViews(TestCase):
         response = self.client.patch(url, data={'is_liked': True})
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         self.assertEquals(Photo.objects.first().is_liked, True)
+
+
+class TestHashView(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username='test', email='test@user.com', password='poiumlkj')
+        self.admin_user = User.objects.create_superuser(
+            username='testAdmin', email='testAdmin@user.com', password='poiumlkj')
+        self.project = self.user.profile.current_project
+        self.image = get_image_file()
+        self.photo = Photo.objects.create(owner=self.user, project=self.project, image=self.image)
+        self.hash = Hash.objects.create(
+            hash='afe43346cd3e543', is_duplicated=False, status=0, photo=self.photo)
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.admin_user)
+
+    @classmethod
+    def tearDownClass(cls):
+        remove_test_images()
+        super().tearDownClass()
+
+    def test_hash_viewset_structure(self):
+        # Serializer class is tested separately
+        self.assertTupleEqual(HashViewSet.permission_classes, (IsAdminUser,))
+        self.assertEquals(HashViewSet.filterset_class, FilterHashView)
+
+    def test_hash_get_serializer_class(self):
+        viewset = HashViewSet()
+        self.assertEquals(viewset.get_serializer_class(), HashSerializer)
+        viewset.action = 'list'
+        self.assertEquals(viewset.get_serializer_class(), DetailedHashSerializer)
+        viewset.action = 'retrieve'
+        self.assertEquals(viewset.get_serializer_class(), DetailedHashSerializer)
+
+    def test_hash_only_admin_users(self):
+        url = reverse('Hash-list')
+        # No User
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # A non-admin user
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_hash_get_list(self):
+        other_photo = Photo.objects.create(owner=self.user, project=self.project, image=self.image)
+        Hash.objects.create(hash='xxx', is_duplicated=False, status=0, photo=other_photo)
+        hashes = Hash.objects.all()
+
+        url = reverse('Hash-list')
+        response = self.client.get(url, data={'project': self.project.id})
+        for item in response.data:
+            item['photo']['image'] = item['photo']['image'].replace('http://testserver', '')
+
+        serializer = DetailedHashSerializer(hashes, many=True)
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEquals(response.data, serializer.data)
+
+    def test_hash_get_detail(self):
+        url = reverse('Hash-detail', args=[self.hash.id])
+        response = self.client.get(url, data={'project': self.project.id})
+        serializer = DetailedHashSerializer(self.hash)
+        response.data['photo']['image'] = response.data['photo']['image'].replace('http://testserver', '')
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEquals(response.data, serializer.data)
+
+    def test_hash_post(self):
+        other_photo = Photo.objects.create(owner=self.user, project=self.project, image=self.image)
+        data = {'photo': other_photo.id, 'hash': 'superhash'}
+        url = reverse('Hash-list')
+        response = self.client.post(url, data=data)
+        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
+
+    def test_hash_delete(self):
+        url = reverse('Hash-detail', args=[self.hash.id]) + f'?project={self.project.id}'
+        response = self.client.delete(url)
+        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEquals(Hash.objects.count(), 0)
+
+    def test_hash_update(self):
+        self.assertEquals(Hash.objects.first().is_duplicated, False)
+        url = reverse('Hash-detail', args=[self.hash.id]) + f'?project={self.project.id}'
+        response = self.client.patch(url, data={'is_duplicated': True})
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEquals(Hash.objects.first().is_duplicated, True)
