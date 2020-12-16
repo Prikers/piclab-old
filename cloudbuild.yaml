@@ -23,9 +23,7 @@ steps:
     pip install pipenv &&
     pipenv lock -r > requirements.txt &&
     pipenv install &&
-    pipenv run python manage.py collectstatic --noinput &&
-    pipenv run python manage.py makemigrations &&
-    pipenv run python manage.py migrate
+    pipenv run python manage.py collectstatic --noinput
 - name: 'gcr.io/cloud-builders/gcloud'
   dir: ./backend
   args: ['app', 'deploy', 'backend.yaml']
