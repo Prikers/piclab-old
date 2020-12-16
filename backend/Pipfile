@@ -16,6 +16,7 @@ google-cloud-storage = "*"
 pillow = "*"
 psycopg2 = "*"
 google-cloud-secret-manager = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"

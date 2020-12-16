@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -38,10 +39,36 @@ class Photo(models.Model):
     name = models.CharField(max_length=50)
     date_created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     is_liked = models.BooleanField(default=False)
-    hash = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
         return f'<Photo: {self.name} on {self.date_created.strftime("%Y-%m-%d")}>'
 
     class Meta:
         ordering = ['-date_created']
+
+
+class Hash(models.Model):
+
+    NO_DUPLICATE = 0
+    TODO = 1
+    DONE = 2
+    SKIPPED = 3
+    STATUS = [
+        (NO_DUPLICATE, 'no_duplicate'),
+        (TODO, 'todo'),
+        (DONE, 'done'),
+        (SKIPPED, 'skipped'),
+    ]
+
+    photo = models.OneToOneField(Photo, on_delete=models.CASCADE)
+    hash = models.CharField(max_length=256, null=True, blank=True)
+    is_duplicated = models.BooleanField(default=False)
+    duplicate_id = models.CharField(max_length=128, null=True, default=None)
+    status = models.SmallIntegerField(choices=STATUS, default=NO_DUPLICATE)
+    date_status = models.DateTimeField(null=True, blank=True, default=timezone.now)
+
+    def __str__(self):
+        return f'< Hash of Photo {self.photo.name}: {self.hash}'
+
+    class Meta:
+        ordering = ['-status', '-date_status']

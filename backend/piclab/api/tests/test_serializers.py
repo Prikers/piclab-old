@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from piclab.api.models import Photo, Project
-from piclab.api.serializers import PhotoSerializer, ProjectSerializer
+from piclab.api.models import Hash, Photo, Project
+from piclab.api.serializers import DetailedHashSerializer, HashSerializer, PhotoSerializer, ProjectSerializer
 from piclab.api.tests.utils import remove_test_images, get_image_file
 
 User = get_user_model()
@@ -68,7 +68,7 @@ class TestPhotoSerializer(TestCase):
     def test_photo_contains_expected_fields(self):
         self.assertListEqual(
             list(self.serializer.data.keys()),
-            ['id', 'image', 'name', 'date_created', 'is_liked', 'project', 'hash'],
+            ['id', 'image', 'name', 'date_created', 'is_liked', 'project', 'hash_id'],
         )
 
     def test_photo_name_is_added(self):
@@ -95,3 +95,41 @@ class TestPhotoSerializer(TestCase):
         serializer.is_valid()
         serializer.save(owner=self.user)
         self.assertEquals(serializer.data['name'], shortened)
+
+
+class TestHashSerialized(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(
+            email='test@user.com', username='test', password='poiumlkj')
+        self.project = self.user.profile.current_project
+        self.image = get_image_file()
+        self.photo = Photo.objects.create(owner=self.user, project=self.project, image=self.image)
+        self.hash = Hash.objects.create(
+            hash='afe43346cd3e543', is_duplicated=False, status=0, photo=self.photo)
+
+    @classmethod
+    def tearDownClass(cls):
+        remove_test_images()
+        super().tearDownClass()
+
+    def test_hash_structure(self):
+        self.assertEquals(HashSerializer.Meta.model, Hash)
+
+    def test_hash_contains_expected_fields(self):
+        serializer = HashSerializer(instance=self.hash)
+        self.assertListEqual(
+            list(serializer.data.keys()),
+            ['id', 'photo', 'hash', 'is_duplicated',
+            'duplicate_id', 'status', 'date_status'],
+        )
+        self.assertIsInstance(serializer.data['photo'], int)
+
+    def test_hash_detailed_contains_expected_fields(self):
+        serializer = DetailedHashSerializer(instance=self.hash)
+        self.assertListEqual(
+            list(serializer.data.keys()),
+            ['id', 'photo', 'hash', 'is_duplicated',
+            'duplicate_id', 'status', 'date_status',]
+        )
+        self.assertIsInstance(serializer.data['photo'], dict)
