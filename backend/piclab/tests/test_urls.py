@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from piclab.user.views import RegisterView, ProfileViewSet
-from piclab.api.views import PhotoViewSet, ProjectViewSet
+from piclab.api.views import HashViewSet, PhotoViewSet, ProjectViewSet
 
 
 class TestUrls(SimpleTestCase):
@@ -62,3 +62,12 @@ class TestUrls(SimpleTestCase):
         self.assertEquals(url, '/api/profile/1/')
         self.assertEquals(resolve(url).func.cls, ProfileViewSet)
 
+    def test_api_router_hashes_resolves(self):
+        url = reverse('Hash-list')
+        self.assertEquals(url, '/api/hash/')
+        self.assertEquals(resolve(url).func.cls, HashViewSet)
+
+    def test_api_router_hashes_details_resolves(self):
+        url = reverse('Hash-detail', args=[1])
+        self.assertEquals(url, '/api/hash/1/')
+        self.assertEquals(resolve(url).func.cls, HashViewSet)
