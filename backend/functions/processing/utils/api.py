@@ -30,6 +30,11 @@ class API:
             raise ValueError(f'Failed retrieving {self.file.name} at url {url}')
         return photo[0]
 
+    def post_photo_metadata(self, metadata):
+        url = f'{self.base_url}/photos/{self.photo["id"]}/?project={self.project}'
+        requests.patch(url=url, headers=self.headers, data=metadata)
+        print(f'Exif data for {self.file} has been added')
+
     def post_hash_data(self, hash_value):
         # Create the Hash entry in database
         url = f'{self.base_url}/hash/?project={self.project}'
