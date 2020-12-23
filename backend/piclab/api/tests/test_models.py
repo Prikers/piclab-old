@@ -33,12 +33,12 @@ class TestPhotoModel(TestCase):
     def test_photo_str(self):
         self.assertEquals(
             str(self.photo),
-            f'<Photo: {self.photo.name} on {self.photo.date_created.strftime("%Y-%m-%d")}>'
+            f'<Photo: {self.photo.name} on {self.photo.datetime_uploaded.strftime("%Y-%m-%d")}>'
         )
 
     def test_photo_default_values(self):
         self.assertFalse(self.photo.is_liked)
-        self.assertEquals(self.photo.date_created.date(), date.today())
+        self.assertEquals(self.photo.datetime_uploaded.date(), date.today())
 
     def test_photo_access_photo_from_user(self):
         self.assertEquals(self.user.photos.first(), self.photo)
