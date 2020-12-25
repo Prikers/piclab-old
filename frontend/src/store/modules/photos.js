@@ -55,6 +55,9 @@ const actions = {
 
 const mutations = {
   setPhotos: (state, photos) => {
+    photos.forEach((photo) => {
+      photo.datetime_photo = new Date(photo.datetime_photo);
+    });
     state.photos = photos;
   },
   likePhoto: (state, photo) => {

@@ -14,7 +14,7 @@
             >
                 <div class="d-flex flow-column">
                   <v-btn
-                    @click="togglePhotoDetails(photo)"
+                    @click="flipped=true"
                     :class="{ 'show-btns': hover }"
                     color="rgba(255, 255, 255, 0)"
                     icon
@@ -61,13 +61,15 @@
             class="d-flex flex-column"
           >
             <v-list dense class="ml-4">
-              <v-subheader>{{photo.name}}</v-subheader>
-              <v-list-item>
+              <v-subheader>{{ photo.name }}</v-subheader>
+              <v-list-item dense>
                 <v-list-item-icon>
-                  <v-icon>mdi-calendar</v-icon>
+                  <v-icon>mdi-calendar-blank</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>2020, Feb 17th</v-list-item-title>
+                  <v-list-item-title>
+                    {{ photo.datetime_photo.toDateString() }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
@@ -75,24 +77,50 @@
                   <v-icon>mdi-clock</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>19h13 14s</v-list-item-title>
+                  <v-list-item-title>
+                    {{ photo.datetime_photo.toTimeString().substring(0, 8) }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
                 <v-list-item-icon>
-                  <v-icon>mdi-pin</v-icon>
+                  <v-icon>mdi-map-marker</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>Paris, France</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-camera</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ photo.camera }}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-image-size-select-actual</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ `${photo.width} x ${photo.height} px (${photo.file_size} kB)`}}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
             <v-spacer></v-spacer>
-            <v-btn icon @click="flipped=false">
-              <v-icon>
-                mdi-arrow-left
-              </v-icon>
-            </v-btn>
+            <div class="d-flex flow-column">
+              <v-btn icon @click="flipped=false">
+                <v-icon>
+                  mdi-arrow-left
+                </v-icon>
+              </v-btn>
+              <v-spacer></v-spacer>
+              <photo-exif :photo="photo"></photo-exif>
+            </div>
           </v-card>
       </div>
     </div>
@@ -101,6 +129,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import PhotoExif from './PhotoExif.vue';
 
 export default {
   name: 'Photo',
@@ -108,11 +137,11 @@ export default {
     flipped: false,
   }),
   props: ['photo'],
+  components: {
+    PhotoExif,
+  },
   methods: {
     ...mapActions(['toggleLikePhoto']),
-    togglePhotoDetails(photo) {
-      this.flipped = true;
-    },
   },
 
 };
@@ -123,11 +152,9 @@ export default {
 .v-card {
   transition: .4s ease-in-out;
 }
-
 .v-card.on-hover {
   opacity: 0.8;
  }
-
 .show-btns {
   color: rgba(255, 255, 255, 1) !important;
 }
@@ -137,59 +164,57 @@ export default {
   -moz-perspective: 1000;
   -o-perspective: 1000;
   perspective: 1000;
-}
-.flip-container {
   min-height: 120px;
 }
 .flipper {
+  transform: perspective(1000px);
   -moz-transform: perspective(1000px);
+  transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
   position: relative;
 }
-.front,
-.back {
+.front, .back {
+  backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
   -o-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-transition: 0.6s;
-  -webkit-transform-style: preserve-3d;
-  -moz-transition: 0.6s;
-  -moz-transform-style: preserve-3d;
-  -o-transition: 0.6s;
-  -o-transform-style: preserve-3d;
-  -ms-transition: 0.6s;
-  -ms-transform-style: preserve-3d;
   transition: 0.6s;
+  -webkit-transition: 0.6s;
+  -moz-transition: 0.6s;
+  -o-transition: 0.6s;
+  -ms-transition: 0.6s;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  -o-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
   top: 0;
   left: 0;
   width: 100%;
 }
 .back {
+  transform: rotateY(-180deg);
   -webkit-transform: rotateY(-180deg);
   -moz-transform: rotateY(-180deg);
   -o-transform: rotateY(-180deg);
   -ms-transform: rotateY(-180deg);
-  transform: rotateY(-180deg);
   position: absolute;
 }
 .flip-container.flipped .back {
+  transform: rotateY(0deg);
   -webkit-transform: rotateY(0deg);
   -moz-transform: rotateY(0deg);
   -o-transform: rotateY(0deg);
   -ms-transform: rotateY(0deg);
-  transform: rotateY(0deg);
 }
 .flip-container.flipped .front {
+  transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
   -moz-transform: rotateY(180deg);
   -o-transform: rotateY(180deg);
   -ms-transform: rotateY(180deg);
-  transform: rotateY(180deg);
 }
 .front {
   z-index: 2;
 }
-
 </style>
