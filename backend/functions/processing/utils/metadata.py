@@ -18,7 +18,10 @@ def get_metadata(image, file):
             if isinstance(val, bytes):
                 exif[ExifTags.TAGS[key]] = val.decode('utf-8')
             elif isinstance(val, IFDRational):
-                exif[ExifTags.TAGS[key]] = float(val)
+                try:
+                    exif[ExifTags.TAGS[key]] = float(val)
+                except ZeroDivisionError:
+                    exif[ExifTags.TAGS[key]] = None
             else:
                 exif[ExifTags.TAGS[key]] = val
     # Construct Metadata dict
