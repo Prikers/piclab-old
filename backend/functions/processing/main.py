@@ -31,13 +31,14 @@ def main(event, context):
     image = Image.open(tmp_file)
     metadata = get_metadata(image, tmp_file)
     hash_ = generate_hash(image)
-
-    generate_thumbnail(image, file, bucket)
+    thumb_file = generate_thumbnail(image.copy(), tmp_file)
 
     # Save results
     api = API(project, file)
     api.post_hash_data(hash_)
     api.post_photo_metadata(metadata)
+    api.post_thumbnail(thumb_file)
 
-    # Delete the temporary file.
+    # Delete the temporary files
     os.remove(tmp_file)
+    os.remove(thumb_file)
