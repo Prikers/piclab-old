@@ -30,12 +30,16 @@ def upload_path(instance, filename):
     folder = 'photos'
     return f'{folder}/{instance.owner.email}/{instance.project.id}.{instance.project.name}/originals/{filename}'
 
+def upload_path_thumbnail(instance, filename):
+    return upload_path(instance, filename).replace('originals', 'thumbnails')
+
 
 class Photo(models.Model):
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='photos')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
     image = models.ImageField(upload_to=upload_path)
+    thumbnail = models.ImageField(upload_to=upload_path_thumbnail, null=True, blank=True)
     name = models.CharField(max_length=50)
     datetime_uploaded = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     # Metadata fields

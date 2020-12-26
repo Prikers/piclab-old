@@ -69,6 +69,17 @@ class TestPhotoModel(TestCase):
             f'photos/{self.user.email}/{self.project.id}.{self.project.name}/originals/{new_image.name}'
         )
 
+    def test_photo_thumbnail_upload_path(self):
+        thumbnail = get_image_file(name='test_new.jpg', ext='jpeg')
+        photo = Photo.objects.create(
+            owner=self.user, project=self.project,
+            image=self.image, thumbnail=thumbnail,
+        )
+        self.assertEquals(
+            photo.thumbnail.name,
+            f'photos/{self.user.email}/{self.project.id}.{self.project.name}/thumbnails/{thumbnail.name}'
+        )
+
 
 class TestProjectModel(TestCase):
 

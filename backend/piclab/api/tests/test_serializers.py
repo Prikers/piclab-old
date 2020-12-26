@@ -68,7 +68,7 @@ class TestPhotoSerializer(TestCase):
     def test_photo_contains_expected_fields(self):
         self.assertListEqual(
             list(self.serializer.data.keys()),
-            ['id', 'image', 'name', 'datetime_uploaded', 'project',
+            ['id', 'image', 'name', 'thumbnail', 'datetime_uploaded', 'project',
             'datetime_photo', 'file_size', 'width', 'height', 'dpi',
             'camera', 'longitude', 'latitude', 'exif', 'hash_id', 'is_liked'],
         )
