@@ -8,7 +8,7 @@
             :class="{ 'on-hover': hover }"
           >
             <v-img
-              :src="photo.image"
+              :src="photo.thumbnail"
               aspect-ratio="1"
               class="d-flex flex-row align-end"
             >
