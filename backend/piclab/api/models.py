@@ -30,21 +30,36 @@ def upload_path(instance, filename):
     folder = 'photos'
     return f'{folder}/{instance.owner.email}/{instance.project.id}.{instance.project.name}/originals/{filename}'
 
+def upload_path_thumbnail(instance, filename):
+    return upload_path(instance, filename).replace('originals', 'thumbnails')
+
 
 class Photo(models.Model):
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='photos')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
     image = models.ImageField(upload_to=upload_path)
+    thumbnail = models.ImageField(upload_to=upload_path_thumbnail, null=True, blank=True)
     name = models.CharField(max_length=50)
-    date_created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    datetime_uploaded = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    # Metadata fields
+    datetime_photo = models.DateTimeField(null=True, blank=True)
+    file_size = models.IntegerField(null=True, blank=True)
+    width = models.IntegerField(null=True, blank=True)
+    height = models.IntegerField(null=True, blank=True)
+    dpi = models.CharField(null=True, blank=True, max_length=50)
+    camera = models.CharField(null=True, blank=True, max_length=100)
+    longitude = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    exif = models.JSONField(null=True, default=dict)
+    # User inputs fields
     is_liked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'<Photo: {self.name} on {self.date_created.strftime("%Y-%m-%d")}>'
+        return f'<Photo: {self.name} on {self.datetime_uploaded.strftime("%Y-%m-%d")}>'
 
     class Meta:
-        ordering = ['-date_created']
+        ordering = ['-datetime_uploaded']
 
 
 class Hash(models.Model):

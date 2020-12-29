@@ -1,5 +1,6 @@
 import axios from 'axios';
 import api from './api';
+import utils from './utils';
 
 const { API_URL } = api;
 
@@ -55,6 +56,15 @@ const actions = {
 
 const mutations = {
   setPhotos: (state, photos) => {
+    photos.forEach((photo) => {
+      photo.datetime_photo = {
+        exists: !!photo.datetime_photo,
+        date: photo.datetime_photo ? new Date(photo.datetime_photo).toDateString() : 'Not defined',
+        time: photo.datetime_photo ? new Date(photo.datetime_photo).toTimeString().substring(0, 8) : 'Not defined',
+      };
+      photo.file_size_hr = utils.humanReadableSize(photo.file_size);
+      photo.camera = photo.camera ? photo.camera : 'Not defined';
+    });
     state.photos = photos;
   },
   likePhoto: (state, photo) => {

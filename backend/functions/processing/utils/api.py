@@ -1,7 +1,8 @@
 from datetime import datetime
 import os
-import requests
 import uuid
+
+import requests
 
 
 class API:
@@ -29,6 +30,17 @@ class API:
         if len(photo) == 0:
             raise ValueError(f'Failed retrieving {self.file.name} at url {url}')
         return photo[0]
+
+    def post_thumbnail(self, thumb_file):
+        url = f'{self.base_url}/photos/{self.photo["id"]}/?project={self.project}'
+        files=[('thumbnail', (self.file.name, open(thumb_file, 'rb'), 'image/jpeg'))]
+        response = requests.patch(url=url, headers=self.headers, files=files)
+        print(f'Thumbnail for {self.file} has been posted', response)
+
+    def post_photo_metadata(self, metadata):
+        url = f'{self.base_url}/photos/{self.photo["id"]}/?project={self.project}'
+        response = requests.patch(url=url, headers=self.headers, data=metadata)
+        print(f'Exif data for {self.file} has been added', response)
 
     def post_hash_data(self, hash_value):
         # Create the Hash entry in database

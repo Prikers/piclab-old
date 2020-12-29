@@ -33,12 +33,12 @@ class TestPhotoModel(TestCase):
     def test_photo_str(self):
         self.assertEquals(
             str(self.photo),
-            f'<Photo: {self.photo.name} on {self.photo.date_created.strftime("%Y-%m-%d")}>'
+            f'<Photo: {self.photo.name} on {self.photo.datetime_uploaded.strftime("%Y-%m-%d")}>'
         )
 
     def test_photo_default_values(self):
         self.assertFalse(self.photo.is_liked)
-        self.assertEquals(self.photo.date_created.date(), date.today())
+        self.assertEquals(self.photo.datetime_uploaded.date(), date.today())
 
     def test_photo_access_photo_from_user(self):
         self.assertEquals(self.user.photos.first(), self.photo)
@@ -67,6 +67,17 @@ class TestPhotoModel(TestCase):
         self.assertEquals(
             photo.image.name,
             f'photos/{self.user.email}/{self.project.id}.{self.project.name}/originals/{new_image.name}'
+        )
+
+    def test_photo_thumbnail_upload_path(self):
+        thumbnail = get_image_file(name='test_new.jpg', ext='jpeg')
+        photo = Photo.objects.create(
+            owner=self.user, project=self.project,
+            image=self.image, thumbnail=thumbnail,
+        )
+        self.assertEquals(
+            photo.thumbnail.name,
+            f'photos/{self.user.email}/{self.project.id}.{self.project.name}/thumbnails/{thumbnail.name}'
         )
 
 

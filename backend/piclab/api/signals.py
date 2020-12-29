@@ -11,9 +11,7 @@ from piclab.api.models import Photo
 def remove_file_from_storage(sender, instance, using, **kwargs):
     if instance.image:
         try:
-            path = Path(instance.image.name)
-            thumbnail = str(path.parent.parent / 'thumbnails' / path.name)
             instance.image.delete(save=False)
-            default_storage.delete(thumbnail)
+            instance.thumbnail.delete(save=False)
         except Exception as e:
             pass
