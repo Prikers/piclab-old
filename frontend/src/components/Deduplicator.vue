@@ -99,6 +99,9 @@ export default {
           this.$store.dispatch('deletePhoto', hash.photo.id)
             .then(() => {
               this.$store.dispatch('notify', { text: '1 photo deleted!', color: 'warning' });
+            })
+            .catch((err) => {
+              this.$store.dispatch('notify', { text: err, color: 'error' });
             });
         } else {
           this.$store.dispatch('markPhotoAsReviewed', { hash, review: 'done' });

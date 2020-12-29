@@ -2,6 +2,7 @@
   <div v-bind:class="flipped ? 'flip-container flipped': 'flip-container'">
     <div class="flipper">
       <div class="front">
+        <!-- Front Face of the Photo Card -->
         <v-hover v-slot:default="{ hover }">
           <v-card
             :elevation="hover ? 12 : 2"
@@ -55,73 +56,105 @@
         </v-hover>
       </div>
       <div class="back" style="height:100%">
-          <v-card
-            elevation="12"
-            height="100%"
-            class="d-flex flex-column"
-          >
-            <v-list dense class="ml-4">
-              <v-subheader>{{ photo.name }}</v-subheader>
-              <v-list-item dense>
-                <v-list-item-icon>
-                  <v-icon>mdi-calendar-blank</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ photo.datetime_photo.date }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-clock</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ photo.datetime_photo.time }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-map-marker</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Paris, France</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-camera</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ photo.camera }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-image-size-select-actual</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ `${photo.width} x ${photo.height} px (${photo.file_size_hr})`}}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-            <v-spacer></v-spacer>
-            <div class="d-flex flow-column">
-              <v-btn icon @click="flipped=false">
-                <v-icon>
-                  mdi-arrow-left
-                </v-icon>
+        <!-- Back Face of the Photo Card -->
+        <v-card
+          elevation="12"
+          height="100%"
+          class="d-flex flex-column"
+        >
+          <!-- Modal for delete button -->
+          <v-dialog v-model="dialogDeletePhoto" max-width="500">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn small absolute fab top right style="top: 10px;"
+                @click="dialogDeletePhoto=true"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-delete</v-icon>
               </v-btn>
-              <v-spacer></v-spacer>
-              <photo-exif :photo="photo"></photo-exif>
-            </div>
-          </v-card>
+            </template>
+            <v-card>
+              <v-card-title class="headline">
+                Are you sure you want to delete?
+              </v-card-title>
+              <v-card-text>
+                It will delete {{ photo.name }}. This action cannot be undone.
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn @click="dialogDeletePhoto = false">
+                  Cancel
+                </v-btn>
+                <v-btn color="error" @click="handleDeletePhoto(photo)">
+                  Yes, delete!
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- List of main exif information -->
+          <v-list dense class="ml-4">
+            <v-subheader>{{ photo.name }}</v-subheader>
+            <v-list-item dense>
+              <v-list-item-icon>
+                <v-icon>mdi-calendar-blank</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ photo.datetime_photo.date }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-clock</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ photo.datetime_photo.time }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-map-marker</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Paris, France</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-camera</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ photo.camera }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-image-size-select-actual</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ `${photo.width} x ${photo.height} px (${photo.file_size_hr})`}}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-spacer></v-spacer>
+          <div class="d-flex flow-column">
+            <v-btn icon @click="flipped=false">
+              <v-icon>
+                mdi-arrow-left
+              </v-icon>
+            </v-btn>
+            <v-spacer></v-spacer>
+            <!-- Modal for photo exif -->
+            <photo-exif :photo="photo"></photo-exif>
+          </div>
+        </v-card>
       </div>
     </div>
   </div>
@@ -135,6 +168,7 @@ export default {
   name: 'Photo',
   data: () => ({
     flipped: false,
+    dialogDeletePhoto: false,
   }),
   props: ['photo'],
   components: {
@@ -142,6 +176,16 @@ export default {
   },
   methods: {
     ...mapActions(['toggleLikePhoto']),
+    handleDeletePhoto(photo) {
+      this.$store.dispatch('deletePhoto', photo.id)
+        .then(() => {
+          this.$store.dispatch('notify', { text: `Photo "${photo.name}" has been deleted!`, color: 'warning' });
+        })
+        .catch((err) => {
+          this.$store.dispatch('notify', { text: err, color: 'error' });
+        });
+      this.dialogDeletePhoto = false;
+    },
   },
 
 };
