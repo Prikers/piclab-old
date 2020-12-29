@@ -106,7 +106,7 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>
-                    {{ `${photo.width} x ${photo.height} px (${photo.file_size} kB)`}}
+                    {{ `${photo.width} x ${photo.height} px (${photo.file_size_hr})`}}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
