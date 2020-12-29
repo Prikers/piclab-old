@@ -68,7 +68,7 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>
-                    {{ photo.datetime_photo.toDateString() }}
+                    {{ photo.datetime_photo.date }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -78,7 +78,7 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>
-                    {{ photo.datetime_photo.toTimeString().substring(0, 8) }}
+                    {{ photo.datetime_photo.time }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
