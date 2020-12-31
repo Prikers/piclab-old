@@ -46,5 +46,6 @@ steps:
     --trigger-resource circular-fusion-290809.appspot.com \
     --trigger-event google.storage.object.finalize \
     --source backend/functions/processing \
-    --set-env-vars CLOUD_FUNCTION_EMAIL=circular-fusion-290809@appspot.gserviceaccount.com,GOOGLE_CLOUD_HOST_URL=circular-fusion-290809.ew.r.appspot.com,CLOUD_FUNCTION_PASSWORD=$(cat password.txt)
+    --set-env-vars CLOUD_FUNCTION_EMAIL=circular-fusion-290809@appspot.gserviceaccount.com,GOOGLE_CLOUD_HOST_URL=circular-fusion-290809.ew.r.appspot.com,CLOUD_FUNCTION_PASSWORD=$(cat password.txt) \
+    --memory=1024
 timeout: '1600s'
