@@ -1,10 +1,11 @@
-def generate_thumbnail(image, file, bucket,
-                       thumbnail_size=(128, 128)):
-    # Create the thumbnail
+from pathlib import Path
+
+from PIL import ImageOps
+
+def generate_thumbnail(image, tmp_file, thumbnail_size=(400, 400)):
+    tmp_file = Path(tmp_file)
+    thumb_file = str(tmp_file).replace(tmp_file.stem, tmp_file.stem + '_thumbnail')
     image.thumbnail(thumbnail_size)
-    image.save(image.filename)
-    # Save the thumbnail in the bucket
-    thumbnail = str(file.parent.parent / 'thumbnails' / file.name)
-    new_blob = bucket.blob(thumbnail)
-    new_blob.upload_from_filename(image.filename)
-    print(f'Thumbnail uploaded to: {thumbnail}')
+    image = ImageOps.exif_transpose(image)  # Apply EXIF orientation, otherwise initial orientation is lost
+    image.save(thumb_file)
+    return thumb_file

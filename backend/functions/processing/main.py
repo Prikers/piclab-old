@@ -7,6 +7,7 @@ from PIL import Image
 
 from utils.api import API
 from utils.deduplicator import generate_hash
+from utils.metadata import get_metadata
 from utils.thumbnails import generate_thumbnail
 
 def main(event, context):
@@ -28,12 +29,16 @@ def main(event, context):
     # Processing chain
     project = int(file.parent.parent.name.split('.')[0])
     image = Image.open(tmp_file)
-    generate_thumbnail(image, file, bucket)
+    metadata = get_metadata(image, tmp_file)
     hash_ = generate_hash(image)
+    thumb_file = generate_thumbnail(image.copy(), tmp_file)
 
     # Save results
     api = API(project, file)
     api.post_hash_data(hash_)
+    api.post_photo_metadata(metadata)
+    api.post_thumbnail(thumb_file)
 
-    # Delete the temporary file.
+    # Delete the temporary files
     os.remove(tmp_file)
+    os.remove(thumb_file)

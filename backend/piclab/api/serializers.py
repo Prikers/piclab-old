@@ -15,8 +15,11 @@ class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = [
-            'id', 'image', 'name', 'date_created',
-            'is_liked', 'project', 'hash_id',
+            'id', 'image', 'name', 'thumbnail', 'datetime_uploaded', 'project',
+            'datetime_photo', 'file_size', 'width', 'height', 'dpi',
+            'camera', 'longitude', 'latitude', 'exif',
+            'hash_id',
+            'is_liked'
         ]
 
     def create(self, validated_data):

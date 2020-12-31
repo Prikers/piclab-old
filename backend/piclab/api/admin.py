@@ -28,9 +28,10 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'owner_link', 'project_link',
-                    'date_created', 'like', 'photo_link', 'hash_link')
+                    'datetime_uploaded', 'datetime_photo',
+                    'like', 'photo_link', 'hash_link')
     search_fields = ('name',)
-    readonly_fields = ('owner', 'date_created', 'project')
+    readonly_fields = ('owner', 'datetime_uploaded', 'project')
 
     def owner_link(self, obj):
         url = reverse('admin:user_user_changelist') + '?' + urlencode({'id': f'{obj.owner.id}'})
@@ -49,6 +50,9 @@ class PhotoAdmin(admin.ModelAdmin):
     
     def like(self, obj):
         return format_html('♥' if obj.is_liked else '')
+
+    def size(self, obj):
+        return format_html(f'({obj.width}, {obj.height})')
 
     owner_link.short_description = 'owner'
     project_link.short_description = 'project'
